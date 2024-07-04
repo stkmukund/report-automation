@@ -105,10 +105,31 @@ export default {
                             Campaign Category
                         </th>
                         <th scope="col" class="px-6 py-3">
+                            Sales Total
+                        </th>
+                        <th scope="col" class="px-6 py-3">
                             Initial Sales
                         </th>
                         <th scope="col" class="px-6 py-3">
+                            Declines
+                        </th>
+                        <th scope="col" class="px-6 py-3">
                             Partials
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Rebill Revenue
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Rebill Approval
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Rebill Refunds
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Front-end Refunds
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Rebill Refunds
                         </th>
                         <th scope="col" class="px-6 py-3">
                             CC initial Sales
