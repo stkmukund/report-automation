@@ -42,8 +42,7 @@ const campaignCategory = {
 const fetchSales = async (campaignProductId,campaignId) => {
   const queryStringProduct = campaignProductId.join(',');
   const queryStringCampaign = campaignId.join(',');
-  // let response = await fetch(`https://api.checkoutchamp.com/order/query/?loginId=revboostapirs.nymbus&password=RSsfFrR2nN5PcC6L1pSRs&campaignId=${queryStringCampaign}&orderStatus=COMPLETE&startDate=06/01/2024&endDate=07/01/2024&resultsPerPage=200&campaignProductId=${queryStringProduct}&orderType=NEW_SALE`);
-  let response = await fetch(`https://api.checkoutchamp.com/order/query/?loginId=revboostapirs.nymbus&password=RSsfFrR2nN5PcC6L1pSRs&campaignId=39&startDate=06/01/2024&endDate=07/01/2024&resultsPerPage=200`);
+  let response = await fetch(`https://api.checkoutchamp.com/order/query/?loginId=revboostapirs.nymbus&password=RSsfFrR2nN5PcC6L1pSRs&campaignId=${queryStringCampaign}&orderStatus=COMPLETE&startDate=06/01/2024&endDate=07/01/2024&resultsPerPage=200&campaignProductId=${queryStringProduct}&orderType=NEW_SALE`);
   const data = await response.json();
 
   return data;
