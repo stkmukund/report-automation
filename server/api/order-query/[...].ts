@@ -38,7 +38,7 @@ const campaignCategory = {
     campaignProductId: [3029],
   },
 };
-
+// Sales Total
 router.get(
   "/sales-total",
   defineEventHandler(async (event) => {
@@ -77,5 +77,123 @@ router.get(
     return finalResult;
   })
 );
+// Initial Sale
+router.get(
+  "/initial-sale",
+  defineEventHandler(async (event) => {
+    const config = useRuntimeConfig(event);
+    const query = getQuery(event);
+    // Now you can access your query parameters using the query object
+    if (!query.startDate || !query.endDate)
+      return "provide startDate and endDate";
+
+    // fetch sales total
+    const fetchSales = async (campaignId: any) => {
+      const queryStringCampaign = campaignId.join(",");
+      let response = await fetch(
+        `https://api.checkoutchamp.com/order/query/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=COMPLETE&startDate=${query.startDate}&endDate=${query.endDate}&resultsPerPage=1&orderType=NEW_SALE`
+      );
+      const data = await response.json();
+
+      return data;
+    };
+
+    let finalValues = [];
+    let finalKeys = Object.keys(campaignCategory);
+    let values = Object.values(campaignCategory);
+    let categoryCampaignId = values.map((value) => value.campaignId);
+    for (let index = 0; index < categoryCampaignId.length; index++) {
+      let res = await fetchSales(categoryCampaignId[index]);
+      finalValues.push(res.message.totalResults);
+    }
+
+    const finalResult = {};
+    finalKeys.forEach((key, index) => {
+      if (finalValues[index] === undefined) finalValues[index] = 0;
+      finalResult[key] = finalValues[index];
+    });
+
+    return finalResult;
+  })
+);
+// Declined
+router.get(
+  "/declined",
+  defineEventHandler(async (event) => {
+    const config = useRuntimeConfig(event);
+    const query = getQuery(event);
+    // Now you can access your query parameters using the query object
+    if (!query.startDate || !query.endDate)
+      return "provide startDate and endDate";
+
+    // fetch sales total
+    const fetchSales = async (campaignId: any) => {
+      const queryStringCampaign = campaignId.join(",");
+      let response = await fetch(
+        `https://api.checkoutchamp.com/order/query/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=DECLINED&startDate=${query.startDate}&endDate=${query.endDate}&resultsPerPage=1`
+      );
+      const data = await response.json();
+
+      return data;
+    };
+
+    let finalValues = [];
+    let finalKeys = Object.keys(campaignCategory);
+    let values = Object.values(campaignCategory);
+    let categoryCampaignId = values.map((value) => value.campaignId);
+    for (let index = 0; index < categoryCampaignId.length; index++) {
+      let res = await fetchSales(categoryCampaignId[index]);
+      finalValues.push(res.message.totalResults);
+    }
+
+    const finalResult = {};
+    finalKeys.forEach((key, index) => {
+      if (finalValues[index] === undefined) finalValues[index] = 0;
+      finalResult[key] = finalValues[index];
+    });
+
+    return finalResult;
+  })
+);
+// Partials
+router.get(
+  "/partial",
+  defineEventHandler(async (event) => {
+    const config = useRuntimeConfig(event);
+    const query = getQuery(event);
+    // Now you can access your query parameters using the query object
+    if (!query.startDate || !query.endDate)
+      return "provide startDate and endDate";
+
+    // fetch sales total
+    const fetchSales = async (campaignId: any) => {
+      const queryStringCampaign = campaignId.join(",");
+      let response = await fetch(
+        `https://api.checkoutchamp.com/order/query/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=PARTIAL&startDate=${query.startDate}&endDate=${query.endDate}&resultsPerPage=1`
+      );
+      const data = await response.json();
+
+      return data;
+    };
+
+    let finalValues = [];
+    let finalKeys = Object.keys(campaignCategory);
+    let values = Object.values(campaignCategory);
+    let categoryCampaignId = values.map((value) => value.campaignId);
+    for (let index = 0; index < categoryCampaignId.length; index++) {
+      let res = await fetchSales(categoryCampaignId[index]);
+      finalValues.push(res.message.totalResults);
+    }
+
+    const finalResult = {};
+    finalKeys.forEach((key, index) => {
+      if (finalValues[index] === undefined) finalValues[index] = 0;
+      finalResult[key] = finalValues[index];
+    });
+
+    return finalResult;
+  })
+);
+// 
 
 export default useBase("/api/order-query", router.handler);
