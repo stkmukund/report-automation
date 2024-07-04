@@ -39,10 +39,12 @@ const campaignCategory = {
   },
 };
 
-const fetchSales = async (campaignProductId,campaignId) => {
-  const queryStringProduct = campaignProductId.join(',');
-  const queryStringCampaign = campaignId.join(',');
-  let response = await fetch(`https://api.checkoutchamp.com/order/query/?loginId=revboostapirs.nymbus&password=RSsfFrR2nN5PcC6L1pSRs&campaignId=${queryStringCampaign}&orderStatus=COMPLETE&startDate=06/01/2024&endDate=07/01/2024&resultsPerPage=200&campaignProductId=${queryStringProduct}&orderType=NEW_SALE`);
+const fetchSales = async (campaignProductId, campaignId) => {
+  const queryStringProduct = campaignProductId.join(",");
+  const queryStringCampaign = campaignId.join(",");
+  let response = await fetch(
+    `https://api.checkoutchamp.com/order/query/?loginId=revboostapirs.nymbus&password=RSsfFrR2nN5PcC6L1pSRs&campaignId=${queryStringCampaign}&orderStatus=COMPLETE&startDate=06/01/2024&endDate=07/01/2024&resultsPerPage=200&campaignProductId=${queryStringProduct}&orderType=NEW_SALE`
+  );
   const data = await response.json();
 
   return data;
@@ -51,28 +53,22 @@ const fetchSales = async (campaignProductId,campaignId) => {
 export default defineEventHandler(async (event) => {
   let finalValues = [];
   let finalKeys = Object.keys(campaignCategory);
-  // const query = getQuery(event);
-  // Now you can access your query parameters using the query object
-  //   if (!query.startDate || !query.endDate)
-  //     return "provide startDate and endDate";
-  //   campaignCategory
   let values = Object.values(campaignCategory);
-  let categoryProductId = values.map(value => value.campaignProductId)
-  let categoryCampaignId = values.map(value => value.campaignId);
-  // console.log(...categoryProductId[1]);
+  let categoryProductId = values.map((value) => value.campaignProductId);
+  let categoryCampaignId = values.map((value) => value.campaignId);
   for (let index = 0; index < categoryProductId.length; index++) {
-    let res = await fetchSales(categoryProductId[index],categoryCampaignId[index]);
+    let res = await fetchSales(
+      categoryProductId[index],
+      categoryCampaignId[index]
+    );
     finalValues.push(res.message.totalResults);
   }
 
   const finalResult = {};
   finalKeys.forEach((key, index) => {
-    if(finalValues[index] === undefined) finalValues[index] = 0;
+    if (finalValues[index] === undefined) finalValues[index] = 0;
     finalResult[key] = finalValues[index];
   });
-  
-
-    
 
   return finalResult;
 });

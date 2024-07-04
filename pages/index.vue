@@ -82,7 +82,8 @@ export default {
         async salesTotal() {
             try {
                 let response = await
-                    axios.get(`/api/order-query/sales-total/?startDate=${this.startDate}&endDate=${this.endDate}`);
+                    axios.get(`/api/order-query/sales-total/?
+                    startDate=${this.startDate}&endDate=${this.endDate}`);
                 console.log(response.data);
             } catch (error) {
                 console.log("getting error salesTotal");
