@@ -2,39 +2,39 @@ const router = createRouter();
 
 const campaignCategory = {
   secretLane: {
-    campaignId: [39],
+    campaignId: [39, 42, 41],
     campaignProductId: [741, 1256],
   },
   lashCosmetics: {
-    campaignId: [1, 68],
+    campaignId: [1, 68, 61, 47, 9, 6, 67, 69, 70],
     campaignProductId: [7, 463],
   },
   browCharm: {
-    campaignId: [8, 45, 48],
+    campaignId: [8, 45, 48, 88, 24, 20, 10, 28, 34, 35, 82, 83],
     campaignProductId: [462, 1255],
   },
   floralSecrets: {
-    campaignId: [12, 46],
+    campaignId: [12, 46, 38, 46, 85, 12, 55, 21, 15, 71],
     campaignProductId: [180, 1201],
   },
   invisiLift: {
-    campaignId: [56],
+    campaignId: [16, 53, 31, 19],
     campaignProductId: [746, 1199],
   },
   indestructibleTights: {
-    campaignId: [16, 53],
+    campaignId: [56, 58, 59],
     campaignProductId: [257, 1202],
   },
   mangoLift: {
-    campaignId: [72],
+    campaignId: [72, 73, 75],
     campaignProductId: [1313],
   },
   fitCharm: {
-    campaignId: [76],
+    campaignId: [76, 81, 79],
     campaignProductId: [1435],
   },
   browPro: {
-    campaignId: [97],
+    campaignId: [97, 99, 101],
     campaignProductId: [3029],
   },
 };
@@ -64,9 +64,7 @@ router.get(
     let values = Object.values(campaignCategory);
     let categoryCampaignId = values.map((value) => value.campaignId);
     for (let index = 0; index < categoryCampaignId.length; index++) {
-      let res = await fetchSales(
-        categoryCampaignId[index]
-      );
+      let res = await fetchSales(categoryCampaignId[index]);
       finalValues.push(res.message.totalResults);
     }
 
