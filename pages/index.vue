@@ -30,7 +30,7 @@ export default {
             await this.salesTotal();
             await this.initialSales();
             await this.declined();
-            // await this.partialSales();
+            await this.partialSales();
             // await this.ccinitialSales();
             // await this.ppinitialSales();
             this.finalData = true;
@@ -69,11 +69,13 @@ export default {
 
         async partialSales() {
             try {
-                let response = await axios.get("/api/order-query/partialSales");
-                let values = Object.values(response.data);
-                for (let index = 0; index < values.length; index++) {
-                    this.tableData[index].partialSales = values[index];
-                }
+                let response = await axios.get(
+                    `/api/order-query/partial/?startDate=${this.startDate}&endDate=${this.endDate}`
+                );
+                this.campaignData.map((k, i) => {
+                    let obj = { ...k, initialSales: response.data[i] }
+                    this.campaignData[i] = obj;
+                })
             } catch (error) {
                 console.log("getting error partialSales");
             }

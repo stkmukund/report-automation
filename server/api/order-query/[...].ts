@@ -165,7 +165,6 @@ router.get(
     };
 
     let finalValues = [];
-    let finalKeys = Object.keys(campaignCategory);
     let values = Object.values(campaignCategory);
     let categoryCampaignId = values.map((value) => value.campaignId);
     for (let index = 0; index < categoryCampaignId.length; index++) {
@@ -173,13 +172,7 @@ router.get(
       finalValues.push(res.message.totalResults);
     }
 
-    const finalResult = {};
-    finalKeys.forEach((key, index) => {
-      if (finalValues[index] === undefined) finalValues[index] = 0;
-      finalResult[key] = finalValues[index];
-    });
-
-    return finalResult;
+    return finalValues;
   })
 );
 // Rebill Revenue
