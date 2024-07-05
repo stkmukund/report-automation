@@ -35,6 +35,7 @@ export default {
             await this.rebillApprovedPerc();
             await this.rebillRefundRev();
             await this.frontendRefundRev();
+            await this.frontendRefundPerc();
             this.finalData = true;
             this.loading = false;
             console.log(this.campaignData);
@@ -157,6 +158,21 @@ export default {
                 })
             } catch (error) {
                 console.log("getting error frontendRefundRev");
+            }
+        },
+
+        // frontend-refundPerc
+        async frontendRefundPerc() {
+            try {
+                let response = await axios.get(
+                    `/api/order-query/frontend-refundPerc/?startDate=${this.startDate}&endDate=${this.endDate}`
+                );
+                this.campaignData.map((k, i) => {
+                    let obj = { ...k, frontendRefundPerc: response.data[i] }
+                    this.campaignData[i] = obj;
+                })
+            } catch (error) {
+                console.log("getting error frontendRefundPerc");
             }
         },
 
@@ -285,6 +301,9 @@ export default {
                         </td>
                         <td class="px-6 py-4 text-red-500">
                             {{ item.frontendRefundRev }}
+                        </td>
+                        <td class="px-6 py-4 text-red-500">
+                            {{ item.frontendRefundPerc }}
                         </td>
                         <td class="px-6 py-4">Not Calculated</td>
                         <td class="px-6 py-4">Not Calculated</td>
