@@ -26,6 +26,8 @@ export default {
     },
     methods: {
         async handleClick() {
+            if (!this.startDate && !this.endDate)
+                return ""
             this.loading = true;
             await this.salesTotal();
             await this.initialSales();
@@ -297,10 +299,10 @@ export default {
                             ${{ item.rebillRefundRev }}
                         </td>
                         <td class="px-6 py-4 text-red-500">
-                            ${{ item.frontendRefundRev != "NaN" ? item.frontendRefundRev : "0.00"}}
+                            ${{ item.frontendRefundRev != "NaN" ? item.frontendRefundRev : "0.00" }}
                         </td>
                         <td class="px-6 py-4 text-red-500">
-                            ${{ item.frontendRefundPerc != "NaN" ? item.frontendRefundPerc : "0.00"}}
+                            ${{ item.frontendRefundPerc != "NaN" ? item.frontendRefundPerc : "0.00" }}
                         </td>
                         <td class="px-6 py-4">Not Calculated</td>
                         <td class="px-6 py-4">Not Calculated</td>
