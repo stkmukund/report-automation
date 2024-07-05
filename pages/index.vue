@@ -200,7 +200,7 @@ export default {
     },
 
     // rebill-refundPerc
-    async rebillRefundRev() {
+    async rebillRefundPerc() {
       try {
         let response = await axios.get(
           `/api/order-query/rebill-refundPerc/?startDate=${this.startDate}&endDate=${this.endDate}`
