@@ -32,7 +32,7 @@ export default {
             await this.declined();
             await this.partialSales();
             await this.rebillRev();
-            // await this.ppinitialSales();
+            await this.rebillRefundRev();
             this.finalData = true;
             this.loading = false;
             console.log(this.campaignData);
@@ -125,6 +125,21 @@ export default {
                 })
             } catch (error) {
                 console.log("getting error rebillApprovedPerc");
+            }
+        },
+
+        // rebill-refundRev
+        async rebillRefundRev() {
+            try {
+                let response = await axios.get(
+                    `/api/order-query/rebill-refundRev/?startDate=${this.startDate}&endDate=${this.endDate}`
+                );
+                this.campaignData.map((k, i) => {
+                    let obj = { ...k, rebillRefundRev: response.data[i] }
+                    this.campaignData[i] = obj;
+                })
+            } catch (error) {
+                console.log("getting error rebillRefundRev");
             }
         },
 
@@ -247,6 +262,9 @@ export default {
                         </td>
                         <td class="px-6 py-4">
                             {{ item.rebillApprovedPerc }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ item.rebillRefundRev }}
                         </td>
                         <td class="px-6 py-4">Not Calculated</td>
                         <td class="px-6 py-4">Not Calculated</td>
