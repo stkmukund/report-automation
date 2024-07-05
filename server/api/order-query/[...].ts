@@ -199,7 +199,7 @@ router.get(
     let keys = Object.keys(campaignCategory);
     for (let index = 0; index < keys.length; index++) {
       let res = await fetchSales(keys[index]);
-      finalValues.push(res.message.totalResults);
+      finalValues.push(res.message.rebillRev);
     }
 
     return finalValues;

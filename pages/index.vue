@@ -31,7 +31,7 @@ export default {
             await this.initialSales();
             await this.declined();
             await this.partialSales();
-            // await this.ccinitialSales();
+            await this.rebillRev();
             // await this.ppinitialSales();
             this.finalData = true;
             this.loading = false;
@@ -94,6 +94,21 @@ export default {
                 })
             } catch (error) {
                 console.log("getting error partialSales");
+            }
+        },
+
+        // Rebill revenue
+        async rebillRev() {
+            try {
+                let response = await axios.get(
+                    `/api/order-query/rebill-revenue/?startDate=${this.startDate}&endDate=${this.endDate}`
+                );
+                this.campaignData.map((k, i) => {
+                    let obj = { ...k, rebillRev: response.data[i] }
+                    this.campaignData[i] = obj;
+                })
+            } catch (error) {
+                console.log("getting error rebillRevenue");
             }
         },
 
@@ -212,7 +227,7 @@ export default {
                             {{ item.partial }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ item.ccinitialSales }}
+                            {{ item.rebillRev }}
                         </td>
                         <td class="px-6 py-4">
                             {{ item.ppinitialSales }}
