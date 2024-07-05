@@ -259,10 +259,6 @@ export default {
             </div>
         </div>
 
-        <button @click="salesTotal" class="bg-gray-600 mb-3">
-            Check sales total
-        </button>
-
         <!-- Table -->
         <!-- <div v-if="!finalData">
             <TableLoading />
