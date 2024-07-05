@@ -76,7 +76,7 @@ async function fetchSales(startDate, endDate) {
     // console.log(index);
 
     newSaleCnt.push(data.message[0].newSaleCnt);
-    rebillDeclinesCnt.push(data.message[0].rebillDeclinesCnt);
+    rebillDeclinesCnt.push(data.message[0].rebillRev);
   }
 
   return [newSaleCnt,rebillDeclinesCnt];
