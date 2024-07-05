@@ -291,8 +291,8 @@ router.get(
       let res = await fetchSales(keys[index]);
       let data = res.message;
       let finalRefund = 0;
-      for (let index = 0; index < data.length; index++) {
-        finalRefund += Number(data[index].refundRev);
+      for (let i = 0; i < data.length; i++) {
+        finalRefund += Number(data[i].refundRev);
       }
       finalValues.push(finalRefund.toFixed(2));
     }
