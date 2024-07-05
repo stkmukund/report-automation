@@ -91,8 +91,9 @@ export default {
                     `/api/order-query/sales-total/?startDate=${this.startDate}&endDate=${this.endDate}`
                 );
                 this.campaignData.map((k,i)=>{
-                    let obj = {...k, salesTotal: response.data}
+                    let obj = {...k, salesTotal: response.data[i]}
                     this.tableData[i] = obj;
+                    this.campaignData[i] = obj;
                 })
                 console.log(this.tableData);
                 console.log(this.campaignData);
