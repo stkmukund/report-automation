@@ -28,7 +28,8 @@ export default {
         async handleClick() {
             this.loading = true;
             await this.salesTotal();
-            // await this.initialSales();
+            await this.initialSales();
+            await this.declined();
             // await this.partialSales();
             // await this.ccinitialSales();
             // await this.ppinitialSales();
@@ -40,6 +41,21 @@ export default {
             try {
                 let response = await axios.get(
                     `/api/order-query/initial-sale/?startDate=${this.startDate}&endDate=${this.endDate}`
+                );
+                this.campaignData.map((k, i) => {
+                    let obj = { ...k, initialSales: response.data[i] }
+                    this.campaignData[i] = obj;
+                })
+            } catch (error) {
+                console.log("getting error initialSales");
+            }
+        },
+
+        // Declined
+        async declined() {
+            try {
+                let response = await axios.get(
+                    `/api/order-query/declined/?startDate=${this.startDate}&endDate=${this.endDate}`
                 );
                 this.campaignData.map((k, i) => {
                     let obj = { ...k, initialSales: response.data[i] }
@@ -162,10 +178,10 @@ export default {
         </button>
 
         <!-- Table -->
-        <div v-if="!finalData">
+        <!-- <div v-if="!finalData">
             <TableLoading />
-        </div>
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        </div> -->
+        <div v-if="finalData" class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                     <tr>
