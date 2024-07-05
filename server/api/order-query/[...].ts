@@ -205,5 +205,35 @@ router.get(
     return finalValues;
   })
 );
+// rebillApprovedPerc
+router.get(
+  "/rebillApprovedPerc",
+  defineEventHandler(async (event) => {
+    const config = useRuntimeConfig(event);
+    const query = getQuery(event);
+    // Now you can access your query parameters using the query object
+    if (!query.startDate || !query.endDate)
+      return "provide startDate and endDate";
+
+    // fetch sales total
+    const fetchSales = async (campaignCategoryId) => {
+      let response = await fetch(
+        `https://api.checkoutchamp.com/transactions/summary/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&startDate=${query.startDate}&endDate=${query.endDate}&reportType=product&productId=RECURRING&campaignCategory=${campaignCategoryId}`
+      );
+      const data = await response.json();
+
+      return data;
+    };
+
+    let finalValues = [];
+    let keys = Object.keys(campaignCategory);
+    for (let index = 0; index < keys.length; index++) {
+      let res = await fetchSales(keys[index]);
+      finalValues.push(res.message[0].rebillApprovedPerc);
+    }
+
+    return finalValues;
+  })
+);
 
 export default useBase("/api/order-query", router.handler);

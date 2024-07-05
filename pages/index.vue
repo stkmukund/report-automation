@@ -18,7 +18,7 @@ export default {
                 { name: "FitCharm™" },
                 { name: "BrowPro™" },
             ],
-            tableHead: ["Campaign Category","Sales Total","Initial Sales","Declines","Partials","Rebill Revenue","Rebill Approval %","Rebill Refunds","Front-end Refund Amt","Front-end Refund %","Rebill refund %","Chargebacks","New VIPs","VIP Cancellation","CC New VIPs","CC Initial Sales","PP Initial Sales","PP New VIPs","Total VIPs"],
+            tableHead: ["Campaign Category", "Sales Total", "Initial Sales", "Declines", "Partials", "Rebill Revenue", "Rebill Approval %", "Rebill Refunds", "Front-end Refund Amt", "Front-end Refund %", "Rebill refund %", "Chargebacks", "New VIPs", "VIP Cancellation", "CC New VIPs", "CC Initial Sales", "PP Initial Sales", "PP New VIPs", "Total VIPs"],
             finalData: false,
             startDate: "",
             endDate: "",
@@ -110,6 +110,21 @@ export default {
                 })
             } catch (error) {
                 console.log("getting error rebillRevenue");
+            }
+        },
+
+        // rebillApprovedPerc
+        async rebillRev() {
+            try {
+                let response = await axios.get(
+                    `/api/order-query/rebillApprovedPerc/?startDate=${this.startDate}&endDate=${this.endDate}`
+                );
+                this.campaignData.map((k, i) => {
+                    let obj = { ...k, rebillApprovedPerc: response.data[i] }
+                    this.campaignData[i] = obj;
+                })
+            } catch (error) {
+                console.log("getting error rebillApprovedPerc");
             }
         },
 
@@ -228,10 +243,10 @@ export default {
                             {{ item.partial }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ item.rebillRev }}
+                            ${{ item.rebillRev }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ item.ppinitialSales }}
+                            {{ item.rebillApprovedPerc }}
                         </td>
                         <td class="px-6 py-4">Not Calculated</td>
                         <td class="px-6 py-4">Not Calculated</td>
