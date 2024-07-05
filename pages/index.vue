@@ -35,6 +35,7 @@ export default {
             // await this.ppinitialSales();
             this.finalData = true;
             this.loading = false;
+            console.log(this.campaignData);
         },
 
         // salesTotal
