@@ -7,7 +7,7 @@ export default {
     data() {
         return {
             loading: false,
-            campaignCategory: [
+            campaignData: [
                 { name: "Secret Lane™" },
                 { name: "Lash Cosmetics™" },
                 { name: "Brow Charm™" },
@@ -90,7 +90,12 @@ export default {
                 let response = await axios.get(
                     `/api/order-query/sales-total/?startDate=${this.startDate}&endDate=${this.endDate}`
                 );
-                console.log(response.data);
+                this.campaignData.map((k,i)=>{
+                    let obj = {...k, salesTotal: response.data}
+                    this.tableData[i] = obj;
+                })
+                console.log(this.tableData);
+                console.log(this.campaignData);
             } catch (error) {
                 console.log("getting error salesTotal");
             }
