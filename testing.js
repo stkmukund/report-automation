@@ -1,73 +1,123 @@
-const campaignCategory = {
-  10: {
-    campaignId: [39, 42, 41],
-    campaignProductId: [741, 1256],
-    name: "Secret Lane™",
-  },
-  12: {
-    campaignId: [1, 68, 61, 47, 9, 6, 67, 69, 70],
-    campaignProductId: [7, 463],
-    name: "Lash Cosmetics™",
-  },
-  13: {
-    campaignId: [8, 45, 48, 88, 24, 20, 10, 28, 34, 35, 82, 83],
-    campaignProductId: [462, 1255],
-    name: "Brow Charm™",
-  },
-  15: {
-    campaignId: [12, 46, 38, 46, 85, 12, 55, 21, 15, 71],
-    campaignProductId: [180, 1201],
-    name: "Floral Secrets™",
-  },
-  16: {
-    campaignId: [16, 53, 31, 19],
-    campaignProductId: [746, 1199],
-    name: "InvisiLift™",
-  },
-  21: {
-    campaignId: [56, 58, 59],
-    campaignProductId: [257, 1202],
-    name: "Indestructible Tights™",
-  },
-  23: {
-    campaignId: [72, 73, 75],
-    campaignProductId: [1313],
-    name: "MangoLift™",
-  },
-  25: {
-    campaignId: [76, 81, 79],
-    campaignProductId: [1435],
-    name: "FitCharm™",
-  },
-  28: {
-    campaignId: [97, 99, 101],
-    campaignProductId: [3029],
-    name: "BrowPro™",
-  },
+let res = {
+  result: "SUCCESS",
+  message: [
+    {
+      newSaleCnt: 1211,
+      declinesCnt: 1362,
+      approvedPerc: "47.07",
+      newSaleRev: "42677.84",
+      rebillCnt: 0,
+      rebillDeclinesCnt: 0,
+      rebillApprovedPerc: "0.00",
+      rebillRev: "0.00",
+      salesTax: "1590.63",
+      surcharge: "0.00",
+      refundCnt: 148,
+      refundRev: "-6853.90",
+      expenses: "-3792.60",
+      chargebackCnt: 0,
+      chargebackRev: "0.00",
+      chargebackPerc: "0.00",
+      grossRevenue: "42677.84",
+      netRevenue: "32031.34",
+      currencySymbol: "$",
+      id: 1,
+      refundPerc: "16.06",
+      expenseDetails: {
+        discountPrice: "2000.18",
+        shipDiscount: "0.00",
+        newSaleProductCost: "0.00",
+        rebillProductCost: "0.00",
+        shippingCost: "0.00",
+        monthlyFee: 0,
+        txnFee: "2389.85",
+        discountFee: "1402.75",
+        cbFee: "0.00",
+        rdrFee: "0.00",
+        commission: "0.00",
+      },
+      campaign: "Lash Cosmetics Main Campaign",
+    },
+    {
+      newSaleCnt: 4,
+      declinesCnt: 1,
+      approvedPerc: "80.00",
+      newSaleRev: "152.14",
+      rebillCnt: 0,
+      rebillDeclinesCnt: 0,
+      rebillApprovedPerc: "0.00",
+      rebillRev: "0.00",
+      salesTax: "2.99",
+      surcharge: "0.00",
+      refundCnt: 1,
+      refundRev: "-87.69",
+      expenses: "-6.71",
+      chargebackCnt: 0,
+      chargebackRev: "0.00",
+      chargebackPerc: "0.00",
+      grossRevenue: "152.14",
+      netRevenue: "57.74",
+      currencySymbol: "$",
+      id: 6,
+      refundPerc: "57.64",
+      expenseDetails: {
+        discountPrice: "0.00",
+        shipDiscount: "0.00",
+        newSaleProductCost: "0.00",
+        rebillProductCost: "0.00",
+        shippingCost: "0.00",
+        monthlyFee: 0,
+        txnFee: "0.90",
+        discountFee: "5.81",
+        cbFee: "0.00",
+        rdrFee: "0.00",
+        commission: "0.00",
+      },
+      campaign: "Lash Cosmetics VIP Campaign",
+    },
+    {
+      newSaleCnt: 14,
+      declinesCnt: 48,
+      approvedPerc: "22.58",
+      newSaleRev: "419.37",
+      rebillCnt: 0,
+      rebillDeclinesCnt: 0,
+      rebillApprovedPerc: "0.00",
+      rebillRev: "0.00",
+      salesTax: "10.77",
+      surcharge: "0.00",
+      refundCnt: 0,
+      refundRev: "0.00",
+      expenses: "-57.02",
+      chargebackCnt: 0,
+      chargebackRev: "0.00",
+      chargebackPerc: "0.00",
+      grossRevenue: "419.37",
+      netRevenue: "362.35",
+      currencySymbol: "$",
+      id: 9,
+      refundPerc: "0.00",
+      expenseDetails: {
+        discountPrice: "0.00",
+        shipDiscount: "0.00",
+        newSaleProductCost: "0.00",
+        rebillProductCost: "0.00",
+        shippingCost: "0.00",
+        monthlyFee: 0,
+        txnFee: "16.30",
+        discountFee: "40.72",
+        cbFee: "0.00",
+        rdrFee: "0.00",
+        commission: "0.00",
+      },
+      campaign: "Lash Cosmetics PEG campaign",
+    },
+  ],
 };
 
-let finalResult = [];
+let finalValues = [];
+let finalRefund = 0;
+res.message.map((item) => (finalRefund += Number(item.refundRev)));
+finalValues.push(finalRefund.toFixed(2));
 
-let finalKeys = Object.values(campaignCategory)
-let key = finalKeys.map(k => k.name)
-
-let values = [1,2,3,4,5,6,7,8,9]
-
-values.map((k,i)=>{
-  let obj = {name:key[i]}
-  finalResult.push(obj)
-})
-// console.log(finalResult);
-
-finalResult.map((k,i)=>{
-  let obj = {...k, values:values[i]}
-  finalResult[i] = obj
-})
-
-let testValues = Object.keys(campaignCategory)
-for (let index = 0; index < testValues.length; index++) {
-  console.log(testValues[index]);
-  
-}
-
-console.log(testValues);
+console.log(finalValues);
