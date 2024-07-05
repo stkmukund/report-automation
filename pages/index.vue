@@ -216,10 +216,13 @@ export default {
                             {{ item.salesTotal }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ item.initialSale }}
+                            {{ item.initialSales }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ item.partialSales }}
+                            {{ item.declined }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ item.partial }}
                         </td>
                         <td class="px-6 py-4">
                             {{ item.ccinitialSales }}
