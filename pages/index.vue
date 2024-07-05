@@ -32,6 +32,7 @@ export default {
             await this.declined();
             await this.partialSales();
             await this.rebillRev();
+            await this.rebillApprovedPerc();
             await this.rebillRefundRev();
             this.finalData = true;
             this.loading = false;
@@ -114,7 +115,7 @@ export default {
         },
 
         // rebillApprovedPerc
-        async rebillRev() {
+        async rebillApprovedPerc() {
             try {
                 let response = await axios.get(
                     `/api/order-query/rebillApprovedPerc/?startDate=${this.startDate}&endDate=${this.endDate}`
@@ -263,7 +264,7 @@ export default {
                         <td class="px-6 py-4">
                             {{ item.rebillApprovedPerc }}
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 text-red-500">
                             {{ item.rebillRefundRev }}
                         </td>
                         <td class="px-6 py-4">Not Calculated</td>
