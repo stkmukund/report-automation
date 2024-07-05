@@ -1,5 +1,4 @@
 <template>
-
     <div role="status">
         <svg aria-hidden="true" 
         class="w-6 h-6 text-gray-200 animate-spin 
