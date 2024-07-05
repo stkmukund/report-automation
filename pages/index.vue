@@ -300,7 +300,7 @@ export default {
                             ${{ item.rebillRefundRev }}
                         </td>
                         <div>
-                            <td v-if="item.frontendRefundRev != NaN" class="px-6 py-4 text-red-500">
+                            <td v-if="item.frontendRefundRev != 'NaN'" class="px-6 py-4 text-red-500">
                                 ${{ item.frontendRefundRev }}
                             </td>
                             <td v-else class="px-6 py-4 text-red-500">
