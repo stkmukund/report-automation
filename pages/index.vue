@@ -58,10 +58,9 @@ export default {
                     `/api/order-query/declined/?startDate=${this.startDate}&endDate=${this.endDate}`
                 );
                 this.campaignData.map((k, i) => {
-                    let obj = { ...k, initialSales: response.data[i] }
+                    let obj = { ...k, declined: response.data[i] }
                     this.campaignData[i] = obj;
                 })
-                console.log(this.campaignData);
             } catch (error) {
                 console.log("getting error initialSales");
             }
@@ -73,7 +72,7 @@ export default {
                     `/api/order-query/partial/?startDate=${this.startDate}&endDate=${this.endDate}`
                 );
                 this.campaignData.map((k, i) => {
-                    let obj = { ...k, initialSales: response.data[i] }
+                    let obj = { ...k, partial: response.data[i] }
                     this.campaignData[i] = obj;
                 })
             } catch (error) {
