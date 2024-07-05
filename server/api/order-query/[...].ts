@@ -186,10 +186,9 @@ router.get(
       return "provide startDate and endDate";
 
     // fetch sales total
-    const fetchSales = async (campaignId: any) => {
-      const queryStringCampaign = campaignId.join(",");
+    const fetchSales = async (campaignCategoryId) => {
       let response = await fetch(
-        `https://api.checkoutchamp.com/transactions/summary/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&startDate=${query.startDate}&endDate=${query.endDate}&reportType=product&productId=RECURRING&campaignCategory=${}`
+        `https://api.checkoutchamp.com/transactions/summary/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&startDate=${query.startDate}&endDate=${query.endDate}&reportType=product&productId=RECURRING&campaignCategory=${campaignCategoryId}`
       );
       const data = await response.json();
 
