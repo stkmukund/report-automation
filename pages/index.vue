@@ -297,13 +297,13 @@ export default {
                             {{ item.rebillApprovedPerc }}
                         </td>
                         <td class="px-6 py-4 text-red-500">
-                            {{ item.rebillRefundRev }}
+                            ${{ item.rebillRefundRev }}
                         </td>
                         <td class="px-6 py-4 text-red-500">
-                            {{ item.frontendRefundRev }}
+                            ${{ item.frontendRefundRev }}
                         </td>
                         <td class="px-6 py-4 text-red-500">
-                            {{ item.frontendRefundPerc }}
+                            ${{ item.frontendRefundPerc }}
                         </td>
                         <td class="px-6 py-4">Not Calculated</td>
                         <td class="px-6 py-4">Not Calculated</td>
