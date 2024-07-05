@@ -41,12 +41,11 @@ export default {
                 let response = await axios.get(
                     `/api/order-query/initial-sale/?startDate=${this.startDate}&endDate=${this.endDate}`
                 );
-                let keys = Object.keys(response.data);
-                let values = Object.values(response.data);
-                for (let index = 0; index < keys.length; index++) {
-                    let obj = { name: keys[index], initialSale: values[index] };
-                    this.tableData.push(obj);
-                }
+                this.campaignData.map((k, i) => {
+                    let obj = { ...k, initialSales: response.data[i] }
+                    this.campaignData[i] = obj;
+                })
+                console.log(this.campaignData);
             } catch (error) {
                 console.log("getting error initialSales");
             }
@@ -93,11 +92,10 @@ export default {
                 let response = await axios.get(
                     `/api/order-query/sales-total/?startDate=${this.startDate}&endDate=${this.endDate}`
                 );
-                this.campaignData.map((k,i)=>{
-                    let obj = {...k, salesTotal: response.data[i]}
+                this.campaignData.map((k, i) => {
+                    let obj = { ...k, salesTotal: response.data[i] }
                     this.campaignData[i] = obj;
                 })
-                console.log(this.campaignData);
             } catch (error) {
                 console.log("getting error salesTotal");
             }
