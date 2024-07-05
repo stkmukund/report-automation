@@ -1,41 +1,50 @@
 const router = createRouter();
 
 const campaignCategory = {
-  secretLane: {
+  10: {
     campaignId: [39, 42, 41],
     campaignProductId: [741, 1256],
+    name: "Secret Lane™",
   },
-  lashCosmetics: {
+  12: {
     campaignId: [1, 68, 61, 47, 9, 6, 67, 69, 70],
     campaignProductId: [7, 463],
+    name: "Lash Cosmetics™",
   },
-  browCharm: {
+  13: {
     campaignId: [8, 45, 48, 88, 24, 20, 10, 28, 34, 35, 82, 83],
     campaignProductId: [462, 1255],
+    name: "Brow Charm™",
   },
-  floralSecrets: {
+  15: {
     campaignId: [12, 46, 38, 46, 85, 12, 55, 21, 15, 71],
     campaignProductId: [180, 1201],
+    name: "Floral Secrets™",
   },
-  invisiLift: {
+  16: {
     campaignId: [16, 53, 31, 19],
     campaignProductId: [746, 1199],
+    name: "InvisiLift™",
   },
-  indestructibleTights: {
+  21: {
     campaignId: [56, 58, 59],
     campaignProductId: [257, 1202],
+    name: "Indestructible Tights™",
   },
-  mangoLift: {
+  23: {
     campaignId: [72, 73, 75],
     campaignProductId: [1313],
+    name: "MangoLift™",
   },
-  fitCharm: {
+  25: {
     campaignId: [76, 81, 79],
     campaignProductId: [1435],
+    name: "FitCharm™",
   },
-  browPro: {
+  28: {
     campaignId: [97, 99, 101],
     campaignProductId: [3029],
+    name: "BrowPro™",
   },
 };
 // Sales Total
@@ -68,13 +77,7 @@ router.get(
       finalValues.push(res.message.totalResults);
     }
 
-    const finalResult = {};
-    finalKeys.forEach((key, index) => {
-      if (finalValues[index] === undefined) finalValues[index] = 0;
-      finalResult[key] = finalValues[index];
-    });
-
-    return finalResult;
+    return finalValues;
   })
 );
 // Initial Sale
