@@ -36,7 +36,6 @@ export default {
             await this.rebillRefundRev();
             await this.frontendRefundRev();
             await this.frontendRefundPerc();
-            this.finalData = true;
             this.loading = false;
             console.log(this.campaignData);
         },
@@ -51,8 +50,11 @@ export default {
                     let obj = { ...k, salesTotal: response.data[i] }
                     this.campaignData[i] = obj;
                 })
+                this.finalData = true;
             } catch (error) {
                 console.log("getting error salesTotal");
+                this.finalData = false;
+
             }
         },
 
