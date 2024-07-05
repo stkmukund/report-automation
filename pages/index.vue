@@ -27,10 +27,11 @@ export default {
     methods: {
         async handleClick() {
             this.loading = true;
-            await this.initialSales();
-            await this.partialSales();
-            await this.ccinitialSales();
-            await this.ppinitialSales();
+            await this.salesTotal();
+            // await this.initialSales();
+            // await this.partialSales();
+            // await this.ccinitialSales();
+            // await this.ppinitialSales();
             this.finalData = true;
             this.loading = false;
         },
@@ -92,10 +93,8 @@ export default {
                 );
                 this.campaignData.map((k,i)=>{
                     let obj = {...k, salesTotal: response.data[i]}
-                    this.tableData[i] = obj;
                     this.campaignData[i] = obj;
                 })
-                console.log(this.tableData);
                 console.log(this.campaignData);
             } catch (error) {
                 console.log("getting error salesTotal");
@@ -187,10 +186,13 @@ export default {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(item, index) in tableData" class="bg-white border-b hover:bg-gray-50">
+                    <tr v-for="(item, index) in campaignData" class="bg-white border-b hover:bg-gray-50">
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                             {{ item.name }}
                         </th>
+                        <td class="px-6 py-4">
+                            {{ item.salesTotal }}
+                        </td>
                         <td class="px-6 py-4">
                             {{ item.initialSale }}
                         </td>

@@ -69,7 +69,6 @@ router.get(
     };
 
     let finalValues = [];
-    let finalKeys = Object.keys(campaignCategory);
     let values = Object.values(campaignCategory);
     let categoryCampaignId = values.map((value) => value.campaignId);
     for (let index = 0; index < categoryCampaignId.length; index++) {
