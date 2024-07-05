@@ -54,7 +54,6 @@ export default {
             } catch (error) {
                 console.log("getting error salesTotal");
                 this.finalData = false;
-
             }
         },
 
@@ -301,17 +300,11 @@ export default {
                         <td class="px-6 py-4 text-red-500">
                             ${{ item.rebillRefundRev }}
                         </td>
-                        <div>
-                            <td v-if="item.frontendRefundRev != 'NaN'" class="px-6 py-4 text-red-500">
-                                ${{ item.frontendRefundRev }}
-                            </td>
-                            <td v-else class="px-6 py-4 text-red-500">
-                                ${{ "0.00" }}
-                            </td>
-                        </div>
-
+                        <td v-if="item.frontendRefundRev != 'NaN'" class="px-6 py-4 text-red-500">
+                            ${{ item.frontendRefundRev != "NaN" ? item.frontendRefundRev : "0.00"}}
+                        </td>
                         <td class="px-6 py-4 text-red-500">
-                            ${{ item.frontendRefundPerc }}
+                            ${{ item.frontendRefundPerc != "NaN" ? item.frontendRefundPerc : "0.00"}}
                         </td>
                         <td class="px-6 py-4">Not Calculated</td>
                         <td class="px-6 py-4">Not Calculated</td>
