@@ -57,11 +57,17 @@ values.map((k,i)=>{
   let obj = {name:key[i]}
   finalResult.push(obj)
 })
-console.log(finalResult);
+// console.log(finalResult);
 
 finalResult.map((k,i)=>{
   let obj = {...k, values:values[i]}
   finalResult[i] = obj
 })
 
-// console.log(finalResult);
+let testValues = Object.keys(campaignCategory)
+for (let index = 0; index < testValues.length; index++) {
+  console.log(testValues[index]);
+  
+}
+
+console.log(testValues);
