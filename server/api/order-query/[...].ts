@@ -324,8 +324,11 @@ router.get(
     let keys = Object.keys(campaignCategory);
     for (let index = 0; index < keys.length; index++) {
       let res = await fetchSales(keys[index]);
+      let data = res.message;
       let finalRefund = 0;
-      res.message.map((item)=> (finalRefund += Number(item.refundPerc)))
+      for (let i = 0; i < data.length; i++) {
+        finalRefund += Number(data[i].refundPerc);
+      }
       finalValues.push(finalRefund.toFixed(2));
     }
 
