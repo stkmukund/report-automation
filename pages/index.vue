@@ -300,7 +300,7 @@ export default {
                             ${{ item.rebillRefundRev }}
                         </td>
                         <td class="px-6 py-4 text-red-500">
-                            ${{ item.frontendRefundRev }}
+                            ${{ item.frontendRefundRev ? item.frontendRefund : "0.00" }}
                         </td>
                         <td class="px-6 py-4 text-red-500">
                             ${{ item.frontendRefundPerc }}
