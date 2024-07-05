@@ -299,9 +299,15 @@ export default {
                         <td class="px-6 py-4 text-red-500">
                             ${{ item.rebillRefundRev }}
                         </td>
-                        <td class="px-6 py-4 text-red-500">
-                            ${{ item.frontendRefundRev ? item.frontendRefund : "0.00" }}
-                        </td>
+                        <div>
+                            <td v-if="item.frontendRefundRev != NaN" class="px-6 py-4 text-red-500">
+                                ${{ item.frontendRefundRev }}
+                            </td>
+                            <td v-else class="px-6 py-4 text-red-500">
+                                ${{ "0.00" }}
+                            </td>
+                        </div>
+
                         <td class="px-6 py-4 text-red-500">
                             ${{ item.frontendRefundPerc }}
                         </td>
