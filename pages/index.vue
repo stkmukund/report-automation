@@ -18,7 +18,7 @@ export default {
                 { name: "FitCharm™" },
                 { name: "BrowPro™" },
             ],
-            tableData: [],
+            tableHead: ["Campaign Category","Sales Total","Initial Sales","Declines","Partials","Rebill Revenue","Rebill Approval %","Rebill Refunds","Front-end Refund Amt","Front-end Refund %","Rebill refund %","Chargebacks","New VIPs","VIP Cancellation","CC New VIPs","CC Initial Sales","PP Initial Sales","PP New VIPs","Total VIPs"],
             finalData: false,
             startDate: "",
             endDate: "",
@@ -190,21 +190,8 @@ export default {
         <div v-if="finalData" class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                    <tr>
-                        <th scope="col" class="px-6 py-3">Campaign Category</th>
-                        <th scope="col" class="px-6 py-3">Sales Total</th>
-                        <th scope="col" class="px-6 py-3">Initial Sales</th>
-                        <th scope="col" class="px-6 py-3">Declines</th>
-                        <th scope="col" class="px-6 py-3">Partials</th>
-                        <th scope="col" class="px-6 py-3">Rebill Revenue</th>
-                        <th scope="col" class="px-6 py-3">Rebill Approval</th>
-                        <th scope="col" class="px-6 py-3">Rebill Refunds</th>
-                        <th scope="col" class="px-6 py-3">Front-end Refunds</th>
-                        <th scope="col" class="px-6 py-3">Rebill Refunds</th>
-                        <th scope="col" class="px-6 py-3">CC initial Sales</th>
-                        <th scope="col" class="px-6 py-3">PP Initial Sales</th>
-                        <th scope="col" class="px-6 py-3">CC New VIPs</th>
-                        <th scope="col" class="px-6 py-3">PP New VIPs</th>
+                    <tr v-for="(item, index) in tableHead">
+                        <th scope="col" class="px-6 py-3">{{ tableHead[index] }}</th>
                     </tr>
                 </thead>
                 <tbody>
