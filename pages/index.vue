@@ -37,6 +37,22 @@ export default {
             this.loading = false;
         },
 
+        // salesTotal
+        async salesTotal() {
+            try {
+                let response = await axios.get(
+                    `/api/order-query/sales-total/?startDate=${this.startDate}&endDate=${this.endDate}`
+                );
+                this.campaignData.map((k, i) => {
+                    let obj = { ...k, salesTotal: response.data[i] }
+                    this.campaignData[i] = obj;
+                })
+            } catch (error) {
+                console.log("getting error salesTotal");
+            }
+        },
+
+        // initialSales
         async initialSales() {
             try {
                 let response = await axios.get(
@@ -62,10 +78,11 @@ export default {
                     this.campaignData[i] = obj;
                 })
             } catch (error) {
-                console.log("getting error initialSales");
+                console.log("getting error declined");
             }
         },
 
+        // partial
         async partialSales() {
             try {
                 let response = await axios.get(
@@ -80,6 +97,7 @@ export default {
             }
         },
 
+        // CC initial
         async ccinitialSales() {
             try {
                 let response = await axios.get("/api/order-query/ccinitialSales");
@@ -92,6 +110,7 @@ export default {
             }
         },
 
+        // PP initial
         async ppinitialSales() {
             try {
                 let response = await axios.get("/api/order-query/ppinitialSales");
@@ -101,20 +120,6 @@ export default {
                 }
             } catch (error) {
                 console.log("getting error ppinitialSales");
-            }
-        },
-
-        async salesTotal() {
-            try {
-                let response = await axios.get(
-                    `/api/order-query/sales-total/?startDate=${this.startDate}&endDate=${this.endDate}`
-                );
-                this.campaignData.map((k, i) => {
-                    let obj = { ...k, salesTotal: response.data[i] }
-                    this.campaignData[i] = obj;
-                })
-            } catch (error) {
-                console.log("getting error salesTotal");
             }
         },
 
