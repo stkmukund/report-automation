@@ -190,8 +190,8 @@ export default {
         <div v-if="finalData" class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                    <tr v-for="(item, index) in tableHead">
-                        <th scope="col" class="px-6 py-3">{{ tableHead[index] }}</th>
+                    <tr>
+                        <th v-for="(item, index) in tableHead" scope="col" class="px-6 py-3">{{ tableHead[index] }}</th>
                     </tr>
                 </thead>
                 <tbody>
