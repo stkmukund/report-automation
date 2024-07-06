@@ -368,13 +368,13 @@ export default {
               }}
             </td>
             <td class="px-6 py-4 text-red-500">
-              ${{
+              {{
                 item.frontendRefundPerc != "NaN"
                   ? item.frontendRefundPerc
                   : "0.00"
               }}
             </td>
-            <td class="px-6 py-4">{{item.rebillRefundPerc}}</td>
+            <td class="px-6 py-4">{{ item.rebillRefundPerc }}</td>
             <td class="px-6 py-4">Not Calculated</td>
           </tr>
         </tbody>
