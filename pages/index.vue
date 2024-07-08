@@ -58,6 +58,14 @@ export default {
       await this.frontendRefundRev();
       await this.frontendRefundPerc();
       await this.rebillRefundPerc();
+      await this.chargebackCnt();
+      await this.initialVip();
+      await this.declinedVip();
+      await this.CCinitialVip();
+      await this.CCinitialSale();
+      await this.PPinitialSale();
+      await this.PPinitialVip();
+      await this.totalVip();
       this.loading = false;
       console.log(this.campaignData);
     },
@@ -214,29 +222,123 @@ export default {
       }
     },
 
-    // CC initial
-    async ccinitialSales() {
+    // chargebackCnt
+    async chargebackCnt() {
       try {
-        let response = await axios.get("/api/order-query/ccinitialSales");
-        let values = Object.values(response.data);
-        for (let index = 0; index < values.length; index++) {
-          this.tableData[index].ccinitialSales = values[index];
-        }
+        let response = await axios.get(
+          `/api/order-query/chargebackCnt/?startDate=${this.startDate}&endDate=${this.endDate}`
+        );
+        this.campaignData.map((k, i) => {
+          let obj = { ...k, chargebackCnt: response.data[i] };
+          this.campaignData[i] = obj;
+        });
       } catch (error) {
-        console.log("getting error ccinitialSales");
+        console.log("getting error chargebackCnt");
       }
     },
 
-    // PP initial
-    async ppinitialSales() {
+    // initial-vip
+    async initialVip() {
       try {
-        let response = await axios.get("/api/order-query/ppinitialSales");
-        let values = Object.values(response.data);
-        for (let index = 0; index < values.length; index++) {
-          this.tableData[index].ppinitialSales = values[index];
-        }
+        let response = await axios.get(
+          `/api/order-query/initial-vip/?startDate=${this.startDate}&endDate=${this.endDate}`
+        );
+        this.campaignData.map((k, i) => {
+          let obj = { ...k, initialVip: response.data[i] };
+          this.campaignData[i] = obj;
+        });
       } catch (error) {
-        console.log("getting error ppinitialSales");
+        console.log("getting error initialVip");
+      }
+    },
+
+    // declined-vip
+    async declinedVip() {
+      try {
+        let response = await axios.get(
+          `/api/order-query/declined-vip/?startDate=${this.startDate}&endDate=${this.endDate}`
+        );
+        this.campaignData.map((k, i) => {
+          let obj = { ...k, declinedVip: response.data[i] };
+          this.campaignData[i] = obj;
+        });
+      } catch (error) {
+        console.log("getting error declinedVip");
+      }
+    },
+
+    // CCinitial-vip
+    async CCinitialVip() {
+      try {
+        let response = await axios.get(
+          `/api/order-query/CCinitial-vip/?startDate=${this.startDate}&endDate=${this.endDate}`
+        );
+        this.campaignData.map((k, i) => {
+          let obj = { ...k, CCinitialVip: response.data[i] };
+          this.campaignData[i] = obj;
+        });
+      } catch (error) {
+        console.log("getting error CCinitialVip");
+      }
+    },
+
+    // CCinitial-sale
+    async CCinitialSale() {
+      try {
+        let response = await axios.get(
+          `/api/order-query/CCinitial-sale/?startDate=${this.startDate}&endDate=${this.endDate}`
+        );
+        this.campaignData.map((k, i) => {
+          let obj = { ...k, CCinitialSale: response.data[i] };
+          this.campaignData[i] = obj;
+        });
+      } catch (error) {
+        console.log("getting error CCinitialSale");
+      }
+    },
+
+    // PPinitial-sale
+    async PPinitialSale() {
+      try {
+        let response = await axios.get(
+          `/api/order-query/PPinitial-sale/?startDate=${this.startDate}&endDate=${this.endDate}`
+        );
+        this.campaignData.map((k, i) => {
+          let obj = { ...k, PPinitialSale: response.data[i] };
+          this.campaignData[i] = obj;
+        });
+      } catch (error) {
+        console.log("getting error PPinitialSale");
+      }
+    },
+
+    // PPinitial-vip
+    async PPinitialVip() {
+      try {
+        let response = await axios.get(
+          `/api/order-query/PPinitial-vip/?startDate=${this.startDate}&endDate=${this.endDate}`
+        );
+        this.campaignData.map((k, i) => {
+          let obj = { ...k, PPinitialVip: response.data[i] };
+          this.campaignData[i] = obj;
+        });
+      } catch (error) {
+        console.log("getting error PPinitialVip");
+      }
+    },
+
+    // total-vip
+    async totalVip() {
+      try {
+        let response = await axios.get(
+          `/api/order-query/total-vip/?startDate=${this.startDate}&endDate=${this.endDate}`
+        );
+        this.campaignData.map((k, i) => {
+          let obj = { ...k, totalVip: response.data[i] };
+          this.campaignData[i] = obj;
+        });
+      } catch (error) {
+        console.log("getting error totalVip");
       }
     },
 
@@ -285,7 +387,7 @@ export default {
         type="button"
         class="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none flex gap-2 items-center h-10"
       >
-        Calculate VIPs
+        Calculate
         <div v-if="loading">
           <Loading />
         </div>
@@ -316,7 +418,7 @@ export default {
     <div v-if="!finalData">
       <TableLoading />
     </div>
-    <div
+    <div id="tableDiv"
       v-if="finalData"
       class="relative overflow-x-auto shadow-md sm:rounded-lg"
     >
@@ -375,7 +477,20 @@ export default {
               }}
             </td>
             <td class="px-6 py-4">{{ item.rebillRefundPerc }}</td>
-            <td class="px-6 py-4">Not Calculated</td>
+            <td class="px-6 py-4">
+              {{
+                item.chargebackCnt
+                  ? parseInt(item.chargebackCnt)
+                  : item.chargebackCnt
+              }}
+            </td>
+            <td class="px-6 py-4">{{ item.initialVip }}</td>
+            <td class="px-6 py-4">{{ item.declinedVip }}</td>
+            <td class="px-6 py-4">{{ item.CCinitialVip }}</td>
+            <td class="px-6 py-4">{{ item.CCinitialSale }}</td>
+            <td class="px-6 py-4">{{ item.PPinitialSale }}</td>
+            <td class="px-6 py-4">{{ item.PPinitialVip }}</td>
+            <td class="px-6 py-4">{{ item.totalVip }}</td>
           </tr>
         </tbody>
       </table>
