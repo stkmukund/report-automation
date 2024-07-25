@@ -1,7 +1,7 @@
 <script>
 import axios from "axios";
 import Loading from "~/components/Loading.vue";
-import TableLoading from "~/components/tableLoading.vue";
+import TableLoading from "~/components/TableLoading.vue";
 
 export default {
   data() {
@@ -42,6 +42,7 @@ export default {
       finalData: false,
       startDate: "",
       endDate: "",
+      config: useRuntimeConfig().public,
     };
   },
   methods: {
@@ -67,23 +68,137 @@ export default {
       await this.PPinitialVip();
       await this.totalVip();
       this.loading = false;
-      console.log(this.campaignData);
     },
 
     // salesTotal
     async salesTotal() {
+      const campaignCategory = {
+        10: {
+          campaignId: [39, 42, 41],
+          campaignProductId: [471, 1256, 518, 478],
+          name: "Secret Lane™",
+        },
+        12: {
+          campaignId: [1, 68, 61, 47, 9, 6, 67, 69, 70],
+          campaignProductId: [
+            1011, 1030, 591, 610, 7, 463, 1177, 1196, 30, 1152, 1171, 1174,
+            1222,
+          ],
+          name: "Lash Cosmetics™",
+        },
+        13: {
+          campaignId: [8, 45, 48, 88, 24, 20, 10, 28, 34, 35, 82, 83],
+          campaignProductId: [
+            2827, 2845, 2848, 612, 354, 101, 462, 1255, 160, 363, 432, 441, 569,
+          ],
+          name: "Brow Charm™",
+        },
+        15: {
+          campaignId: [12, 46, 38, 85, 55, 21, 15, 71],
+          campaignProductId: [572, 1655, 1673, 180, 1201, 716, 213, 1260, 1278],
+          name: "Floral Secrets™",
+        },
+        16: {
+          campaignId: [16, 53, 31, 19],
+          campaignProductId: [257, 1202, 709, 286],
+          name: "InvisiLift™",
+        },
+        21: {
+          campaignId: [56, 58, 59],
+          campaignProductId: [746, 1199, 930, 940],
+          name: "Indestructible Tights™",
+        },
+        23: {
+          campaignId: [72, 73, 75],
+          campaignProductId: [1313, 1420, 1352],
+          name: "MangoLift™",
+        },
+        25: {
+          campaignId: [76, 81, 79],
+          campaignProductId: [1435, 1522],
+          name: "FitCharm™",
+        },
+        28: {
+          campaignId: [97, 99, 101],
+          campaignProductId: [3029, 3105, 3074],
+          name: "BrowPro™",
+        },
+      };
       try {
-        let response = await axios.get(
-          `/api/order-query/sales-total/?startDate=${this.startDate}&endDate=${this.endDate}`
-        );
-        this.campaignData.map((k, i) => {
-          let obj = { ...k, salesTotal: response.data[i] };
-          this.campaignData[i] = obj;
-        });
-        this.finalData = true;
+        // for COMPLETE status
+        const fetchSales = async (campaignId) => {
+          const queryStringCampaign = campaignId.join(",");
+          let totalAmount = 0;
+          let response = await fetch(
+            `https://api.checkoutchamp.com/order/query/?loginId=${this.config.CC_LOGIN_ID}&password=${this.config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=COMPLETE&startDate=${this.startDate}&endDate=${this.endDate}&resultsPerPage=200`
+          );
+          const data = await response.json();
+          let iteration = Math.ceil(data.message.totalResults / 200);
+          for (let index = 1; index <= iteration; index++) {
+            let responseNew = await fetch(
+              `https://api.checkoutchamp.com/order/query/?loginId=${this.config.CC_LOGIN_ID}&password=${this.config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=COMPLETE&startDate=${this.startDate}&endDate=${this.endDate}&resultsPerPage=200&page=${index}`
+            );
+            const dataNew = await responseNew.json();
+            const allData = dataNew.message.data;
+            allData.forEach((item) => {
+              if (typeof item.totalAmount !== "string") {
+                item.totalAmount = 0;
+              }
+
+              totalAmount += Number(item.totalAmount);
+            });
+          }
+
+          return totalAmount;
+        };
+        // for REFUND status
+        const fetchSales2 = async (campaignId) => {
+          const queryStringCampaign = campaignId.join(",");
+          let totalAmount = 0;
+          let response = await fetch(
+            `https://api.checkoutchamp.com/order/query/?loginId=${this.config.CC_LOGIN_ID}&password=${this.config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=REFUNDED&startDate=${this.startDate}&endDate=${this.endDate}&resultsPerPage=200`
+          );
+          const data = await response.json();
+          let iteration = Math.ceil(data.message.totalResults / 200);
+          for (let index = 1; index <= iteration; index++) {
+            let responseNew = await fetch(
+              `https://api.checkoutchamp.com/order/query/?loginId=${this.config.CC_LOGIN_ID}&password=${this.config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=REFUNDED&startDate=${this.startDate}&endDate=${this.endDate}&resultsPerPage=200&page=${index}`
+            );
+            const dataNew = await responseNew.json();
+            const allData = dataNew.message.data;
+            allData.forEach((item) => {
+              // if(item.totalAmount != )
+              // console.log(typeof(item.totalAmount));
+              if (typeof item.totalAmount !== "string") {
+                item.totalAmount = 0;
+              }
+
+              totalAmount += Number(item.totalAmount);
+            });
+          }
+
+          return totalAmount;
+        };
+
+        let finalValues = [];
+        let values = Object.values(campaignCategory);
+        let categoryCampaignId = values.map((value) => value.campaignId);
+
+        for (let index = 0; index < categoryCampaignId.length; index++) {
+          let res = await fetchSales(categoryCampaignId[index]);
+          let res2 = await fetchSales2(categoryCampaignId[index]);
+          finalValues.push((res + res2).toFixed(2));
+          this.campaignData.map((k, i) => {
+            let obj = { ...k, salesTotal: finalValues[i] };
+            this.campaignData[i] = obj;
+          });
+          this.finalData = true;
+        }
+
+        // this.finalData = true;
       } catch (error) {
         console.log("getting error salesTotal");
-        this.finalData = false;
+        this.finalData = true;
       }
     },
 
@@ -418,7 +533,8 @@ export default {
     <div v-if="!finalData">
       <TableLoading />
     </div>
-    <div id="tableDiv"
+    <div
+      id="tableDiv"
       v-if="finalData"
       class="relative overflow-x-auto shadow-md sm:rounded-lg"
     >
@@ -446,7 +562,7 @@ export default {
               {{ item.name }}
             </th>
             <td class="px-6 py-4">
-              {{ item.salesTotal }}
+              ${{ item.salesTotal }}
             </td>
             <td class="px-6 py-4">
               {{ item.initialSales }}
@@ -469,12 +585,15 @@ export default {
                   : "0.00"
               }}
             </td>
-            <td class="px-6 py-4 text-red-500">
+            <!-- <td class="px-6 py-4 text-red-500">
               {{
                 item.frontendRefundPerc != "NaN"
                   ? item.frontendRefundPerc
                   : "0.00"
               }}
+            </td>  -->
+            <td class="px-6 py-4 text-red-500">
+              {{ ((item.frontendRefundRev / item.salesTotal) * 100).toFixed(2) }}
             </td>
             <td class="px-6 py-4">{{ item.rebillRefundPerc }}</td>
             <td class="px-6 py-4">
