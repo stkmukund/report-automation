@@ -43,6 +43,7 @@ export default {
       startDate: "",
       endDate: "",
       config: useRuntimeConfig().public,
+      salesRefund: [],
     };
   },
   methods: {
@@ -130,13 +131,13 @@ export default {
           const queryStringCampaign = campaignId.join(",");
           let totalAmount = 0;
           let response = await fetch(
-            `https://api.checkoutchamp.com/order/query/?loginId=${this.config.CC_LOGIN_ID}&password=${this.config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=COMPLETE&startDate=${this.startDate}&endDate=${this.endDate}&resultsPerPage=200`
+            `https://api.checkoutchamp.com/order/query/?loginId=${this.config.CC_LOGIN_ID}&password=${this.config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=COMPLETE&startDate=${this.startDate}&endDate=${this.endDate}&resultsPerPage=200&orderType=NEW_SALE`
           );
           const data = await response.json();
           let iteration = Math.ceil(data.message.totalResults / 200);
           for (let index = 1; index <= iteration; index++) {
             let responseNew = await fetch(
-              `https://api.checkoutchamp.com/order/query/?loginId=${this.config.CC_LOGIN_ID}&password=${this.config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=COMPLETE&startDate=${this.startDate}&endDate=${this.endDate}&resultsPerPage=200&page=${index}`
+              `https://api.checkoutchamp.com/order/query/?loginId=${this.config.CC_LOGIN_ID}&password=${this.config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=COMPLETE&startDate=${this.startDate}&endDate=${this.endDate}&resultsPerPage=200&orderType=NEW_SALE&page=${index}`
             );
             const dataNew = await responseNew.json();
             const allData = dataNew.message.data;
@@ -156,13 +157,13 @@ export default {
           const queryStringCampaign = campaignId.join(",");
           let totalAmount = 0;
           let response = await fetch(
-            `https://api.checkoutchamp.com/order/query/?loginId=${this.config.CC_LOGIN_ID}&password=${this.config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=REFUNDED&startDate=${this.startDate}&endDate=${this.endDate}&resultsPerPage=200`
+            `https://api.checkoutchamp.com/order/query/?loginId=${this.config.CC_LOGIN_ID}&password=${this.config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=REFUNDED&startDate=${this.startDate}&endDate=${this.endDate}&resultsPerPage=200&orderType=NEW_SALE`
           );
           const data = await response.json();
           let iteration = Math.ceil(data.message.totalResults / 200);
           for (let index = 1; index <= iteration; index++) {
             let responseNew = await fetch(
-              `https://api.checkoutchamp.com/order/query/?loginId=${this.config.CC_LOGIN_ID}&password=${this.config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=REFUNDED&startDate=${this.startDate}&endDate=${this.endDate}&resultsPerPage=200&page=${index}`
+              `https://api.checkoutchamp.com/order/query/?loginId=${this.config.CC_LOGIN_ID}&password=${this.config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=REFUNDED&startDate=${this.startDate}&endDate=${this.endDate}&resultsPerPage=200&orderType=NEW_SALE&page=${index}`
             );
             const dataNew = await responseNew.json();
             const allData = dataNew.message.data;
@@ -187,6 +188,7 @@ export default {
         for (let index = 0; index < categoryCampaignId.length; index++) {
           let res = await fetchSales(categoryCampaignId[index]);
           let res2 = await fetchSales2(categoryCampaignId[index]);
+          this.salesRefund.push(res2);
           finalValues.push((res + res2).toFixed(2));
           this.campaignData.map((k, i) => {
             let obj = { ...k, salesTotal: finalValues[i] };
@@ -500,14 +502,14 @@ export default {
         @click="handleClick"
         :disabled="loading"
         type="button"
-        class="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none flex gap-2 items-center h-10"
+        class="w-28 text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 font-medium rounded-lg px-5 py-2.5 me-2 mb-2 focus:outline-none flex gap-2 items-center h-10"
       >
         Calculate
         <div v-if="loading">
           <Loading />
         </div>
       </button>
-      <div class="date-inputs">
+      <div class="date-inputs w-full">
         <input
           v-model="startDate"
           @input="formatDate"
@@ -515,7 +517,7 @@ export default {
           placeholder="Start Date: MMDDYYYY"
           type="text"
           id="small-input"
-          class="mr-3 h-10 p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xl focus:ring-blue-500 focus:border-blue-500"
+          class="mr-3 w-2/12 h-10 p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xl focus:ring-blue-500 focus:border-blue-500"
         />
         <input
           v-model="endDate"
@@ -524,7 +526,7 @@ export default {
           placeholder="End Date: MMDDYYYY"
           type="text"
           id="small-input"
-          class="h-10 p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xl focus:ring-blue-500 focus:border-blue-500"
+          class="w-2/12 h-10 p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xl focus:ring-blue-500 focus:border-blue-500"
         />
       </div>
     </div>
@@ -561,9 +563,7 @@ export default {
             >
               {{ item.name }}
             </th>
-            <td class="px-6 py-4">
-              ${{ item.salesTotal }}
-            </td>
+            <td class="px-6 py-4">${{ item.salesTotal }}</td>
             <td class="px-6 py-4">
               {{ item.initialSales }}
             </td>
@@ -579,11 +579,13 @@ export default {
             </td>
             <td class="px-6 py-4 text-red-500">${{ item.rebillRefundRev }}</td>
             <td class="px-6 py-4 text-red-500">
-              ${{
+              <!-- ${{
                 item.frontendRefundRev != "NaN"
                   ? item.frontendRefundRev
                   : "0.00"
-              }}
+              }} -->
+              <!-- Updated Formula -->
+              ${{ salesRefund[index].toFixed(2) }}
             </td>
             <!-- <td class="px-6 py-4 text-red-500">
               {{
@@ -592,10 +594,20 @@ export default {
                   : "0.00"
               }}
             </td>  -->
+            <!-- Updated formula -->
             <td class="px-6 py-4 text-red-500">
-              {{ ((item.frontendRefundRev / item.salesTotal) * 100).toFixed(2) }}
+              {{ ((salesRefund[index] / item.salesTotal) * 100).toFixed(2) }}
             </td>
-            <td class="px-6 py-4">{{ item.rebillRefundPerc }}</td>
+            <!-- Rebill Refund % -->
+            <!-- <td class="px-6 py-4">{{ item.rebillRefundPerc }}</td> -->
+            <!-- Updated Formula -->
+            <td class="px-6 py-4">
+              {{
+                Math.abs((item.rebillRefundRev / item.rebillRev) * 100).toFixed(
+                  2
+                )
+              }}
+            </td>
             <td class="px-6 py-4">
               {{
                 item.chargebackCnt

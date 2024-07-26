@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import NavBar from './components/NavBar.vue';
+// import NavBar from "./components/NavBar.vue";
 </script>
 
 <template>
-  <div>
+  <div class="h-[100vh]" >
     <!-- <NuxtWelcome /> -->
-     <NavBar />
+    <NavBar />
     <NuxtPage />
-
+    <Footer />
   </div>
 </template>

@@ -51,7 +51,7 @@ const campaignCategory = {
     name: "BrowPro™",
   },
 };
-// Sales Total - Not using
+// Sales Total - Not using (shifted to client side)
 router.get(
   "/sales-total",
   defineEventHandler(async (event) => {
