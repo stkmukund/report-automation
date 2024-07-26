@@ -194,10 +194,9 @@ export default {
             let obj = { ...k, salesTotal: finalValues[i] };
             this.campaignData[i] = obj;
           });
-          this.finalData = true;
         }
 
-        // this.finalData = true;
+        this.finalData = true;
       } catch (error) {
         console.log("getting error salesTotal");
         this.finalData = true;
