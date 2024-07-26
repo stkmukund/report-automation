@@ -25,7 +25,7 @@ export default defineNuxtConfig({
     CC_PASSWORRD: "RSsfFrR2nN5PcC6L1pSRs",
     // Keys within public are also exposed client-side
     public: {
-      salesTotal: "sales-total",
+      // Using to get Sales Total Client Side
       CC_LOGIN_ID: "revboostapirs.nymbus",
       CC_PASSWORRD: "RSsfFrR2nN5PcC6L1pSRs",
     },

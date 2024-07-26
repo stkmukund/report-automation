@@ -1,7 +1,7 @@
 <script>
 import axios from "axios";
-import Loading from "~/components/Loading.vue";
-import TableLoading from "~/components/TableLoading.vue";
+// import Loading from "~/components/Loading.vue";
+// import TableLoading from "~/components/TableLoading.vue";
 
 export default {
   data() {
@@ -502,7 +502,7 @@ export default {
         @click="handleClick"
         :disabled="loading"
         type="button"
-        class="w-28 text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 font-medium rounded-lg px-5 py-2.5 me-2 mb-2 focus:outline-none flex gap-2 items-center h-10"
+        class="max-w-48 text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 font-medium rounded-lg px-5 py-2.5 me-2 mb-2 focus:outline-none flex gap-2 items-center h-10"
       >
         Calculate
         <div v-if="loading">
