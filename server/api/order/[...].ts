@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const router = createRouter();
 
 const campaignCategory = {
@@ -59,109 +61,146 @@ router.get(
     const query = getQuery(event);
     // Now you can access your query parameters using the query object
     if (!query.startDate || !query.endDate)
+      return "provide startDate or endDate";
+
+    if (!query.startDate && !query.endDate)
       return "provide startDate and endDate";
 
-    // fetch sales total
-    const fetchSales = async (campaignId: any) => {
-      const queryStringCampaign = campaignId.join(",");
-      let response = await fetch(
-        `https://api.checkoutchamp.com/order/query/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=COMPLETE&startDate=${query.startDate}&endDate=${query.endDate}&resultsPerPage=200`
-      );
-      const data = await response.json();
+    if (!query.campaignId) return "what about campaignId?";
 
-      return data.message.data;
+    let page = 1;
+    let count = 1;
+    let totalAmount: number = 0;
+    let refundedAmount: number = 0;
+    let completeCount = 0;
+    let refundCount = 0;
+    let cancelCount = 0;
+    let creditCard = 0;
+    let payPal = 0;
+
+    // Complete
+    const fetchComplete = async () => {
+      // const campaignIdString = campaignId.join(",");
+      const { data } = await axios.post(
+        `https://api.checkoutchamp.com/order/query/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&campaignId=${query.campaignId}&orderStatus=COMPLETE&startDate=${query.startDate}&endDate=${query.endDate}&resultsPerPage=200&orderType=NEW_SALE&page=${page}`
+      );
+      const orders: object[] = data.message.data;
+      if (!data.message.data) {
+        return 0;
+      } else {
+        orders.map((item) => {
+          totalAmount += Number(item.totalAmount);
+          if(item.paySource === "CREDITCARD") {
+            creditCard++;
+          } else if(item.paySource === "PAYPAL"){
+            payPal++;
+          }
+        });
+      }
+      completeCount = Number(data.message.totalResults);
+      if (data.message.totalResults > 200) {
+        count = Math.ceil(data.message.totalResults / 200);
+      }
+      if (count > page) {
+        page++;
+        await fetchComplete();
+      }
+
+      page = 1;
+
+      return totalAmount;
     };
 
-    let finalValues = [];
-    let values = Object.values(campaignCategory);
-    let categoryCampaignId = values.map((value) => value.campaignId);
-    for (let index = 0; index < categoryCampaignId.length; index++) {
-      let res = await fetchSales(categoryCampaignId[index]);
-      console.log(res.length);
-      // finalValues.push(res.message.totalResults);
-    }
-
-    return "finalValues";
-  })
-);
-// Initial Sale
-router.get(
-  "/initial-sale",
-  defineEventHandler(async (event) => {
-    const config = useRuntimeConfig(event);
-    const query = getQuery(event);
-    // Now you can access your query parameters using the query object
-    if (!query.startDate || !query.endDate)
-      return "provide startDate and endDate";
-
-    // fetch sales total
-    const fetchSales = async (campaignId: any) => {
-      const queryStringCampaign = campaignId.join(",");
-      let response = await fetch(
-        `https://api.checkoutchamp.com/order/query/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=COMPLETE&startDate=${query.startDate}&endDate=${query.endDate}&resultsPerPage=1&orderType=NEW_SALE`
+    // Refunded
+    const fetchRefunded = async () => {
+      // const campaignIdString = campaignId.join(",");
+      const { data } = await axios.post(
+        `https://api.checkoutchamp.com/order/query/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&campaignId=${query.campaignId}&orderStatus=REFUNDED&startDate=${query.startDate}&endDate=${query.endDate}&resultsPerPage=200&orderType=NEW_SALE&page=${page}`
       );
-      const data = await response.json();
-      if (!data.message.totalResults) {
+      const orders: object[] = data.message.data;
+      if (!data.message.data) {
+        return 0;
+      } else {
+        orders.map((item) => {
+          totalAmount += Number(item.totalAmount);
+          refundedAmount += Number(item.totalAmount);
+          if(item.paySource === "CREDITCARD") {
+            creditCard++;
+          } else if(item.paySource === "PAYPAL"){
+            payPal++;
+          }
+        });
+      }
+      refundCount = Number(data.message.totalResults);
+      if (data.message.totalResults > 200) {
+        count = Math.ceil(data.message.totalResults / 200);
+      }
+      if (count > page) {
+        page++;
+        await fetchRefunded();
+      }
+
+      page = 1;
+
+      return totalAmount;
+    };
+
+    // Cancelled
+    const fetchCancelled = async () => {
+      // const campaignIdString = campaignId.join(",");
+      const { data } = await axios.post(
+        `https://api.checkoutchamp.com/order/query/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&campaignId=${query.campaignId}&orderStatus=CANCELLED&startDate=${query.startDate}&endDate=${query.endDate}&resultsPerPage=200&orderType=NEW_SALE&page=${page}`
+      );
+      const orders: object[] = data.message.data;
+      if (!data.message.data) {
+        return 0;
+      } else {
+        orders.map((item) => {
+          totalAmount += Number(item.totalAmount);
+          if(item.paySource === "CREDITCARD") {
+            creditCard++;
+          } else if(item.paySource === "PAYPAL"){
+            payPal++;
+          }
+        });
+      }
+      cancelCount = Number(data.message.totalResults);
+      if (data.message.totalResults > 200) {
+        count = Math.ceil(data.message.totalResults / 200);
+      }
+      if (count > page) {
+        page++;
+        await fetchCancelled();
+      }
+
+      page = 1;
+
+      return totalAmount;
+    };
+
+    // DECLINED
+    const fetchDeclined = async () => {
+      // const campaignIdString = campaignId.join(",");
+      const { data } = await axios.post(
+        `https://api.checkoutchamp.com/order/query/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&campaignId=${query.campaignId}&orderStatus=DECLINED&startDate=${query.startDate}&endDate=${query.endDate}&resultsPerPage=1&orderType=NEW_SALE&page=${page}`
+      );
+      const orders: object[] = data.message.data;
+      if (!data.message.data) {
         return 0;
       }
-      return data.message.totalResults;
+      let declineCount = Number(data.message.totalResults);
+      return declineCount;
     };
 
-    // for refunded one
-    const fetchSales2 = async (campaignId: any) => {
-      const queryStringCampaign = campaignId.join(",");
-      let response = await fetch(
-        `https://api.checkoutchamp.com/order/query/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=REFUNDED&startDate=${query.startDate}&endDate=${query.endDate}&resultsPerPage=1&orderType=NEW_SALE`
-      );
-      const data = await response.json();
-      if (!data.message.totalResults) {
-        return 0;
-      }
-      return data.message.totalResults;
-    };
+    await fetchComplete();
+    await fetchRefunded();
+    await fetchCancelled();
+    const declined = await fetchDeclined();
 
-    let finalValues = [];
-    let values = Object.values(campaignCategory);
-    let categoryCampaignId = values.map((value) => value.campaignId);
-    for (let index = 0; index < categoryCampaignId.length; index++) {
-      let res = await fetchSales(categoryCampaignId[index]);
-      let res2 = await fetchSales2(categoryCampaignId[index]);
-      finalValues.push(res + res2);
-    }
+    if (!totalAmount) totalAmount = 0;
+    let initialSales = completeCount + refundCount + cancelCount;
 
-    return finalValues;
-  })
-);
-// Declined
-router.get(
-  "/declined",
-  defineEventHandler(async (event) => {
-    const config = useRuntimeConfig(event);
-    const query = getQuery(event);
-    // Now you can access your query parameters using the query object
-    if (!query.startDate || !query.endDate)
-      return "provide startDate and endDate";
-
-    // fetch sales total
-    const fetchSales = async (campaignId: any) => {
-      const queryStringCampaign = campaignId.join(",");
-      let response = await fetch(
-        `https://api.checkoutchamp.com/order/query/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=DECLINED&startDate=${query.startDate}&endDate=${query.endDate}&resultsPerPage=1`
-      );
-      const data = await response.json();
-
-      return data;
-    };
-
-    let finalValues = [];
-    let values = Object.values(campaignCategory);
-    let categoryCampaignId = values.map((value) => value.campaignId);
-    for (let index = 0; index < categoryCampaignId.length; index++) {
-      let res = await fetchSales(categoryCampaignId[index]);
-      finalValues.push(res.message.totalResults);
-    }
-
-    return finalValues;
+    return { totalAmount, refundedAmount, initialSales, declined, creditCard, payPal };
   })
 );
 // Partials
@@ -190,7 +229,9 @@ router.get(
     let categoryCampaignId = values.map((value) => value.campaignId);
     for (let index = 0; index < categoryCampaignId.length; index++) {
       let res = await fetchSales(categoryCampaignId[index]);
-      finalValues.push(res.message.totalResults);
+      let result = res.message.totalResults;
+      if (!result) result = 0;
+      finalValues.push(result);
     }
 
     return finalValues;
@@ -209,10 +250,9 @@ router.get(
     // fetch sales total
     const fetchSales = async (campaignCategoryId) => {
       let response = await fetch(
-        `https://api.checkoutchamp.com/transactions/summary/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&startDate=${query.startDate}&endDate=${query.endDate}&reportType=product&productId=RECURRING&campaignCategory=${campaignCategoryId}`
+        `https://api.checkoutchamp.com/transactions/summary/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&startDate=${query.startDate}&endDate=${query.endDate}&reportType=currency&productId=RECURRING&campaignCategory=${campaignCategoryId}`
       );
       const data = await response.json();
-
       return data;
     };
 
@@ -239,7 +279,7 @@ router.get(
     // fetch sales total
     const fetchSales = async (campaignCategoryId) => {
       let response = await fetch(
-        `https://api.checkoutchamp.com/transactions/summary/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&startDate=${query.startDate}&endDate=${query.endDate}&reportType=product&productId=RECURRING&campaignCategory=${campaignCategoryId}`
+        `https://api.checkoutchamp.com/transactions/summary/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&startDate=${query.startDate}&endDate=${query.endDate}&reportType=currency&productId=RECURRING&campaignCategory=${campaignCategoryId}`
       );
       const data = await response.json();
 
@@ -269,7 +309,7 @@ router.get(
     // fetch sales total
     const fetchSales = async (campaignCategoryId) => {
       let response = await fetch(
-        `https://api.checkoutchamp.com/transactions/summary/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&startDate=${query.startDate}&endDate=${query.endDate}&reportType=product&productId=RECURRING&campaignCategory=${campaignCategoryId}`
+        `https://api.checkoutchamp.com/transactions/summary/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&startDate=${query.startDate}&endDate=${query.endDate}&reportType=currency&productId=RECURRING&campaignCategory=${campaignCategoryId}`
       );
       const data = await response.json();
 
@@ -299,7 +339,7 @@ router.get(
     // fetch sales total
     const fetchSales = async (campaignCategoryId) => {
       let response = await fetch(
-        `https://api.checkoutchamp.com/transactions/summary/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&startDate=${query.startDate}&endDate=${query.endDate}&reportType=product&productId=RECURRING&campaignCategory=${campaignCategoryId}`
+        `https://api.checkoutchamp.com/transactions/summary/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&startDate=${query.startDate}&endDate=${query.endDate}&reportType=currency&productId=RECURRING&campaignCategory=${campaignCategoryId}`
       );
       const data = await response.json();
 
@@ -327,7 +367,7 @@ router.get(
       return "provide startDate and endDate";
 
     // fetch sales total
-    const fetchSales = async (campaignCategoryId) => {
+    const fetchSales = async (campaignCategoryId: number) => {
       let response = await fetch(
         `https://api.checkoutchamp.com/transactions/summary/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&startDate=${query.startDate}&endDate=${query.endDate}&reportType=campaign&productId=ONE_TIME&campaignCategory=${campaignCategoryId}`
       );
@@ -345,6 +385,7 @@ router.get(
       for (let i = 0; i < data.length; i++) {
         finalRefund += Number(data[i].refundRev);
       }
+      if (!finalRefund) finalRefund = 0;
       finalValues.push(finalRefund.toFixed(2));
     }
 
@@ -362,7 +403,7 @@ router.get(
       return "provide startDate and endDate";
 
     // fetch sales total
-    const fetchSales = async (campaignCategoryId) => {
+    const fetchSales = async (campaignCategoryId: number) => {
       let response = await fetch(
         `https://api.checkoutchamp.com/transactions/summary/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&startDate=${query.startDate}&endDate=${query.endDate}&reportType=campaign&productId=ONE_TIME&campaignCategory=${campaignCategoryId}`
       );
@@ -380,6 +421,7 @@ router.get(
       for (let i = 0; i < data.length; i++) {
         finalRefund += Number(data[i].refundPerc);
       }
+      if (!finalRefund) finalRefund = 0;
       finalValues.push(finalRefund.toFixed(2));
     }
 
@@ -463,7 +505,10 @@ router.get(
     let campaignProductId = values.map((value) => value.campaignProductId);
     for (let index = 0; index < categoryCampaignId.length; index++) {
       let res = await fetchSales(categoryCampaignId[index], campaignProductId);
-      let res2 = await fetchSales2(categoryCampaignId[index], campaignProductId);
+      let res2 = await fetchSales2(
+        categoryCampaignId[index],
+        campaignProductId
+      );
       finalValues.push(res + res2);
     }
 
@@ -484,8 +529,14 @@ router.get(
     const fetchSales = async (campaignId: any, campaignProductId: any) => {
       const queryStringCampaign = campaignId.join(",");
       const queryStringCampaignProductId = campaignProductId.join(",");
+      // Old One
+      // let response = await fetch(
+      //   `https://api.checkoutchamp.com/order/query/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=DECLINED&startDate=${query.startDate}&endDate=${query.endDate}&resultsPerPage=1&campaignProductId=${queryStringCampaignProductId}`
+      // );
+
+      // New One
       let response = await fetch(
-        `https://api.checkoutchamp.com/order/query/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=DECLINED&startDate=${query.startDate}&endDate=${query.endDate}&resultsPerPage=1&campaignProductId=${queryStringCampaignProductId}`
+        `https://api.checkoutchamp.com/purchase/query/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&dateRangeType=dateUpdated&campaignId=${queryStringCampaign}&status=CANCELLED&startDate=${query.startDate}&endDate=${query.endDate}&resultsPerPage=1`
       );
       const data = await response.json();
 
@@ -546,99 +597,10 @@ router.get(
     let campaignProductId = values.map((value) => value.campaignProductId);
     for (let index = 0; index < categoryCampaignId.length; index++) {
       let res = await fetchSales(categoryCampaignId[index], campaignProductId);
-      let res2 = await fetchSales2(categoryCampaignId[index], campaignProductId);
-      finalValues.push(res + res2);
-    }
-
-    return finalValues;
-  })
-);
-// CCinitial-sale
-router.get(
-  "/CCinitial-sale",
-  defineEventHandler(async (event) => {
-    const config = useRuntimeConfig(event);
-    const query = getQuery(event);
-    // Now you can access your query parameters using the query object
-    if (!query.startDate || !query.endDate)
-      return "provide startDate and endDate";
-
-    // fetch sales total
-    const fetchSales = async (campaignId: any) => {
-      const queryStringCampaign = campaignId.join(",");
-      let response = await fetch(
-        `https://api.checkoutchamp.com/order/query/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=COMPLETE&startDate=${query.startDate}&endDate=${query.endDate}&resultsPerPage=1&orderType=NEW_SALE&paySource=CREDITCARD`
+      let res2 = await fetchSales2(
+        categoryCampaignId[index],
+        campaignProductId
       );
-      const data = await response.json();
-      if (!data.message.totalResults) {
-        return 0;
-      }
-      return data.message.totalResults;
-    };
-    const fetchSales2 = async (campaignId: any) => {
-      const queryStringCampaign = campaignId.join(",");
-      let response = await fetch(
-        `https://api.checkoutchamp.com/order/query/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=REFUNDED&startDate=${query.startDate}&endDate=${query.endDate}&resultsPerPage=1&orderType=NEW_SALE&paySource=CREDITCARD`
-      );
-      const data = await response.json();
-      if (!data.message.totalResults) {
-        return 0;
-      }
-      return data.message.totalResults;
-    };
-
-    let finalValues = [];
-    let values = Object.values(campaignCategory);
-    let categoryCampaignId = values.map((value) => value.campaignId);
-    for (let index = 0; index < categoryCampaignId.length; index++) {
-      let res = await fetchSales(categoryCampaignId[index]);
-      let res2 = await fetchSales2(categoryCampaignId[index]);
-      finalValues.push(res + res2);
-    }
-
-    return finalValues;
-  })
-);
-// PPinitial-sale
-router.get(
-  "/PPinitial-sale",
-  defineEventHandler(async (event) => {
-    const config = useRuntimeConfig(event);
-    const query = getQuery(event);
-    // Now you can access your query parameters using the query object
-    if (!query.startDate || !query.endDate)
-      return "provide startDate and endDate";
-
-    // fetch sales total
-    const fetchSales = async (campaignId: any) => {
-      const queryStringCampaign = campaignId.join(",");
-      let response = await fetch(
-        `https://api.checkoutchamp.com/order/query/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=COMPLETE&startDate=${query.startDate}&endDate=${query.endDate}&resultsPerPage=1&orderType=NEW_SALE&paySource=PAYPAL`
-      );
-      const data = await response.json();
-      if (!data.message.totalResults) {
-        return 0;
-      }
-      return data.message.totalResults;
-    };
-    const fetchSales2 = async (campaignId: any) => {
-      const queryStringCampaign = campaignId.join(",");
-      let response = await fetch(
-        `https://api.checkoutchamp.com/order/query/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&campaignId=${queryStringCampaign}&orderStatus=REFUNDED&startDate=${query.startDate}&endDate=${query.endDate}&resultsPerPage=1&orderType=NEW_SALE&paySource=PAYPAL`
-      );
-      const data = await response.json();
-      if (!data.message.totalResults) {
-        return 0;
-      }
-      return data.message.totalResults;
-    };
-
-    let finalValues = [];
-    let values = Object.values(campaignCategory);
-    let categoryCampaignId = values.map((value) => value.campaignId);
-    for (let index = 0; index < categoryCampaignId.length; index++) {
-      let res = await fetchSales(categoryCampaignId[index]);
-      let res2 = await fetchSales2(categoryCampaignId[index]);
       finalValues.push(res + res2);
     }
 
@@ -687,7 +649,10 @@ router.get(
     let campaignProductId = values.map((value) => value.campaignProductId);
     for (let index = 0; index < categoryCampaignId.length; index++) {
       let res = await fetchSales(categoryCampaignId[index], campaignProductId);
-      let res2 = await fetchSales2(categoryCampaignId[index], campaignProductId);
+      let res2 = await fetchSales2(
+        categoryCampaignId[index],
+        campaignProductId
+      );
       finalValues.push(res + res2);
     }
 
@@ -736,7 +701,10 @@ router.get(
     let campaignProductId = values.map((value) => value.campaignProductId);
     for (let index = 0; index < categoryCampaignId.length; index++) {
       let res = await fetchSales(categoryCampaignId[index], campaignProductId);
-      let res2 = await fetchSales2(categoryCampaignId[index], campaignProductId);
+      let res2 = await fetchSales2(
+        categoryCampaignId[index],
+        campaignProductId
+      );
       finalValues.push(res + res2);
     }
 
@@ -744,4 +712,4 @@ router.get(
   })
 );
 
-export default useBase("/api/order-query", router.handler);
+export default useBase("/api/order/", router.handler);
