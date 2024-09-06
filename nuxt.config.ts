@@ -1,6 +1,12 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
+  nitro: {
+    server: {
+      // Set the server timeout to 10 minutes (600,000 milliseconds)
+      serverTimeout: 10 * 60 * 1000, // 10 minutes in milliseconds
+    },
+  },
   css: ["/public/assets/css/tailwind.css"],
 
   postcss: {

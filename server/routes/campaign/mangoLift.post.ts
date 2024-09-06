@@ -103,7 +103,7 @@ export default defineEventHandler(async (event) => {
 
   // Update in google sheet
   const item = [
-    "Lash Cosmetics™",
+    "MangoLift™",
     query.startDate,
     Number(totalAmount).toFixed(2),
     initialSales,

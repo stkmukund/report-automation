@@ -103,7 +103,7 @@ export default defineEventHandler(async (event) => {
 
   // Update in google sheet
   const item = [
-    "Lash Cosmetics™",
+    "FitCharm™",
     query.startDate,
     Number(totalAmount).toFixed(2),
     initialSales,
@@ -136,7 +136,7 @@ export default defineEventHandler(async (event) => {
       method: "POST",
       body: item,
     });
-    return ["Sheet updated successfully", item];
+    return ["Sheet updated successfully",response, item];
   } catch (error) {
     return ["Error updating sheet:", error];
   }
