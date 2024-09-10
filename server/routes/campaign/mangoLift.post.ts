@@ -1,5 +1,6 @@
-import { campaignCategory, getYesterdayDate } from ".";
+import { campaignCategory, getStartAndEndDate, getYesterdayDate, updateSheet } from ".";
 import {
+  DateRange,
   InitialVipResponse,
   RebillRevenueResponse,
   RequestOptions,
@@ -10,6 +11,17 @@ import {
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
   const yesterdayDate = getYesterdayDate();
+
+  // For monthly and Quarterly Report
+  if (query.type) {
+    const date: DateRange = getStartAndEndDate(query.type);
+    if (date.startDate) {
+      query.startDate = date.startDate;
+      query.endDate = date.endDate;
+    } else {
+      return `Today is not the first day of the ${query.type}.`;
+    }
+  }
 
   if (!query.startDate || !query.endDate) {
     query.startDate = yesterdayDate;
@@ -132,11 +144,13 @@ export default defineEventHandler(async (event) => {
     recycleRebilling,
   ];
   try {
-    const response = await $fetch("/api/google-sheets/google-api", {
-      method: "POST",
-      body: item,
-    });
-    return ["Sheet updated successfully", item];
+    let response;
+    if (query.type) {
+      response = await updateSheet(item, query.type);
+    } else {
+      response = await updateSheet(item);
+    }
+    return ["Sheet updated successfully", item, response.data];
   } catch (error) {
     return ["Error updating sheet:", error];
   }

@@ -49,3 +49,8 @@ export interface RebillRevenueResponse {
   rebillRefundRev: number;
   chargebackCnt: number;
 }
+
+export interface DateRange {
+  startDate: string | null;
+  endDate: string | null;
+}

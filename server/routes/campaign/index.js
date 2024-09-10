@@ -64,3 +64,74 @@ export const getYesterdayDate = () => {
 
   return `${month}/${day}/${year}`;
 }
+
+export const getStartAndEndDate = (type) => {
+  const today = new Date();
+
+  if (type === "monthly") {
+    // Check if today is the first day of the month
+    if (today.getDate() === 1) {
+      // Set start date as the first day of the previous month
+      const startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+      // Set end date as the last day of the previous month
+      const endDate = new Date(today.getFullYear(), today.getMonth(), 0); // 0 means last day of the previous month
+      return { startDate: formatDate(startDate), endDate: formatDate(endDate) };
+    }
+  } else if (type === "quarterly") {
+    const month = today.getMonth(); // Get current month (0-based index, so Jan = 0)
+    const isFirstDayOfQuarter = today.getDate() === 1 && (month % 3 === 0);
+
+    if (isFirstDayOfQuarter) {
+      // Determine the current quarter
+      const currentQuarter = Math.floor(month / 3) + 1;
+      let previousQuarterStartMonth, previousQuarterEndMonth, previousQuarterYear;
+
+      // Calculate previous quarter's start and end months
+      if (currentQuarter === 1) {
+        // If current quarter is Q1, previous quarter is Q4 of the previous year
+        previousQuarterStartMonth = 9;  // October
+        previousQuarterEndMonth = 11;   // December
+        previousQuarterYear = today.getFullYear() - 1;
+      } else {
+        // For other quarters, just subtract 1 quarter
+        previousQuarterStartMonth = (currentQuarter - 2) * 3;
+        previousQuarterEndMonth = previousQuarterStartMonth + 2;
+        previousQuarterYear = today.getFullYear();
+      }
+
+      // Create the start and end dates for the previous quarter
+      const startDate = new Date(previousQuarterYear, previousQuarterStartMonth, 1);
+      const endDate = new Date(previousQuarterYear, previousQuarterEndMonth + 1, 0); // Last day of the quarter
+
+      return { startDate: formatDate(startDate), endDate: formatDate(endDate) };
+    }
+  }
+
+  return `Today is not the first day of the ${type}.`; // If conditions are not met, return null
+}
+
+function formatDate(date) {
+  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-based
+  const day = date.getDate().toString().padStart(2, '0');
+  const year = date.getFullYear();
+  return `${month}/${day}/${year}`;
+}
+
+export const updateSheet = async (item, type = 'daily') => {
+  const requestOptions = {
+    method: "POST",
+    redirect: "follow",
+    body: JSON.stringify(item)
+  };
+
+  const response = await $fetch(`/api/google-sheets/google-api?type=${type}`, requestOptions)
+    .then((result) => {
+      return result
+    })
+    .catch((error) => {
+      return error
+    });
+
+  return response
+
+}

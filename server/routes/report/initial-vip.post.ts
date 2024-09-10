@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
     }
   };
   const response = await fetch();
-  console.log("response",response);
+  // console.log("response",response);
   
   return response;
 });

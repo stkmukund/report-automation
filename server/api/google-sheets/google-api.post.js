@@ -17,7 +17,15 @@ const googleJSON = {
 };
 
 export default defineEventHandler(async (event) => {
-  const spreadsheetID = "1w0RZBZChXhOZGf73FYcO78bNZmUrYI-FcEaXMgEssYo";
+  const query = getQuery(event);
+  console.log("query.type", query.type);
+
+  let spreadsheetID;
+  if (query.type !== 'daily') {
+    spreadsheetID = "1EbflfdLCFiCObcOnC9anQgFkSp6Rwt69_jyYkgEAMi8"; // Monthly
+  } else {
+    spreadsheetID = "1w0RZBZChXhOZGf73FYcO78bNZmUrYI-FcEaXMgEssYo"; // Daily
+  }
   // Initializes the Google APIs client library and sets up the authentication using service account credentials.
   const auth = new google.auth.GoogleAuth({
     credentials: googleJSON, // Path to your service account key file.
@@ -28,13 +36,13 @@ export default defineEventHandler(async (event) => {
   async function writeToSheet(values) {
     const sheets = google.sheets({ version: "v4", auth }); // Creates a Sheets API client instance.
     const spreadsheetId = spreadsheetID; // The ID of the spreadsheet.
-    const range = `${body[0]}!A:A`; // The range in the sheet where data will be written.
+    const range = `${query.type !== 'daily' ? query.type : body[0]}!A:A`; // The range in the sheet where data will be written.
     const valueInputOption = "USER_ENTERED"; // How input data should be interpreted.
 
     const resource = { values }; // The data to be written.
 
     try {
-      const res = await sheets.spreadsheets.values.append({
+      const res = sheets.spreadsheets.values.append({
         spreadsheetId,
         range,
         valueInputOption,
@@ -51,35 +59,3 @@ export default defineEventHandler(async (event) => {
 
   return writer;
 });
-
-// Asynchronous function to read data from a Google Sheet.
-// async function readSheet() {
-//   const sheets = google.sheets({ version: "v4", auth });
-//   const spreadsheetId = spreadsheetID;
-//   const range = "Sheet1!A1:E10"; // Specifies the range to read.
-
-//   try {
-//     const response = await sheets.spreadsheets.values.get({
-//       spreadsheetId,
-//       range,
-//     });
-//     const rows = response.data.values; // Extracts the rows from the response.
-//     return rows; // Returns the rows.
-//   } catch (error) {
-//     console.error("error", error); // Logs errors.
-//   }
-// }
-
-// Immediately-invoked function expression (IIFE) to execute the read and write operations.
-// (async () => {
-//   // const writer = await writeToSheet([
-//   //   ["Name", "Age", "Location","",],
-//   //   ["Ado", 33, "Miami"],
-//   //   ["Pepe", 21, "Singapore"],
-//   //   ["Juan", 32, "Mexico"],
-//   // ]);
-//   // console.log(writer); // Logs the write operation's response.
-
-//   const data = await readSheet(); // Reads data from the sheet.
-//   console.log(data); // Logs the read data.
-// })();
