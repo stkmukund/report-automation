@@ -135,3 +135,58 @@ export const updateSheet = async (item, type = 'daily') => {
   return response
 
 }
+
+export const filterOrdersByStatus = async (orders) => {
+  let ordersComplete = [];
+  let ordersRefunded = [];
+  let ordersCancelled = [];
+  let totalOrderAmount = 0;
+  let refundedOrderAmount = 0;
+  let creditCardOrders = 0;
+  let payPalOrders = 0;
+  orders.map((order) => {
+    if (order.orderStatus === "COMPLETE") {
+      totalOrderAmount += +order.totalAmount;
+      ordersComplete.push(order);
+      if (order.paySource === "CREDITCARD") {
+        creditCardOrders++;
+      }
+      if (order.paySource === "PAYPAL") {
+        payPalOrders++;
+      }
+    }
+    if (order.orderStatus === "REFUNDED") {
+      totalOrderAmount += +order.totalAmount;
+      ordersRefunded.push(order);
+      refundedOrderAmount += +order.totalAmount;
+      if (order.paySource === "CREDITCARD") {
+        creditCardOrders++;
+      }
+      if (order.paySource === "PAYPAL") {
+        payPalOrders++;
+      }
+    }
+    if (order.orderStatus === "CANCELLED") {
+      totalOrderAmount += +order.totalAmount;
+      ordersCancelled.push(order);
+      if (order.paySource === "CREDITCARD") {
+        creditCardOrders++;
+      }
+      if (order.paySource === "PAYPAL") {
+        payPalOrders++;
+      }
+    }
+  });
+
+  console.log("OrderSummary",ordersComplete.length , ordersRefunded.length , ordersCancelled.length );
+  
+
+  return {
+    totalOrderAmount,
+    refundedOrderAmount,
+    creditCardOrders,
+    payPalOrders,
+    initialOrder:
+      ordersComplete.length + ordersRefunded.length + ordersCancelled.length,
+  };
+};
