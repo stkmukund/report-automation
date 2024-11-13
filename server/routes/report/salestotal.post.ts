@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     return "provide startDate and endDate";
 
   const body = await readBody(event);
-  console.log("body", body);
+  // console.log("body", body);
 
 
   // Convert the array to a comma-separated string
