@@ -66,7 +66,7 @@ export default defineEventHandler(async (event) => {
   ).then((res) => Number(res));
 
   // rebill-revenue
-  const { rebillRevenue, rebillApprovedPerc, rebillRefundRev, chargebackCnt } =
+  const { rebillApproveCount, rebillDeclineCount, rebillRevenue, rebillApprovedPerc, rebillRefundRev, chargebackCnt } =
     await $fetch<RebillRevenueResponse>(
       `/report/rebill-revenue?startDate=${query.startDate}&endDate=${query.endDate}`,
       requestOptionsTransaction
@@ -130,6 +130,8 @@ export default defineEventHandler(async (event) => {
     partial,
     Number(avgTicket),
     rebillRevenue,
+    rebillApproveCount,
+    rebillDeclineCount,
     rebillApprovedPerc / 100,
     Math.abs(rebillRefundRev),
     Number(billableRebillRev),

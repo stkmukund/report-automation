@@ -23,6 +23,8 @@ export default {
         "Declines",
         "Partials",
         "Rebill Revenue",
+        "Rebill Approved Count",
+        "Rebill Declined Count",
         "Rebill Approval %",
         "Rebill Refunds",
         "Front-end Refund Amt",
@@ -60,56 +62,13 @@ export default {
       if (!this.startDate && !this.endDate) return "";
       this.loading = true;
       await this.salesTotal();
-      // await this.declinePerc();
       await this.partialSales();
-      // // await this.avgTicket();
       await this.rebillRev();
-      // await this.rebillApprovedPerc();
-      // await this.rebillRefundRev();
-      // // await this.billableRebillRev();
-      // // await this.frontendRefundRev();
-      // // await this.frontendRefundPerc();
-      // await this.rebillRefundPerc();
-      // await this.chargebackCnt();
       await this.initialVip();
       await this.declinedVip();
-      // // await this.CCinitialVip();
-      // // await this.CCoptVip();
-      // await this.CCinitialSale();
-      // // await this.updateCCoptVip();
-      // await this.PPinitialSale();
-      // // await this.PPinitialVip();
-      // // await this.PPoptVip();
-      // // await this.TotaloptPPCC();
       await this.totalVip();
       this.loading = false;
     },
-
-    // salesTotal
-    // async salesTotal() {
-    //   try {
-    //     const values = Object.values(this.config.campaignCategory);
-    //     const categoryCampaignIds = values.map((value) => value.campaignId);
-    //     const fetch = async (value, index) => {
-    //       const { data } = await axios.get(
-    //         `/api/order/sales-total/?startDate=${this.startDate}&endDate=${this.endDate}&campaignId=${value}`
-    //       );
-    //       const { totalAmount, refundedAmount, initialSales, declined } =
-    //         await data;
-    //       this.campaignData[index].salesTotal = Number(totalAmount).toFixed(2);
-    //       this.campaignData[index].initialSales = Number(initialSales);
-    //       this.campaignData[index].declined = Number(declined);
-    //       this.salesRefund.push(Number(refundedAmount).toFixed(2));
-    //       return 1;
-    //     };
-    //     for (const [index, value] of categoryCampaignIds.entries()) {
-    //       await fetch(value, index);
-    //     }
-    //     this.finalData = true;
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // },
 
     // salesTotal
     async salesTotal() {
@@ -188,11 +147,13 @@ export default {
       for (let index = 0; index < ids.length; index++) {
         const id = ids[index];
 
-        const { rebillRevenue, rebillApprovedPerc, rebillRefundRev, chargebackCnt } = await $fetch(`/report/rebill-revenue?startDate=${this.startDate}&endDate=${this.endDate}`, {
+        const { rebillApproveCount, rebillDeclineCount, rebillRevenue, rebillApprovedPerc, rebillRefundRev, chargebackCnt } = await $fetch(`/report/rebill-revenue?startDate=${this.startDate}&endDate=${this.endDate}`, {
           method: "POST",
           redirect: "follow",
           body: JSON.stringify(id),
         });
+        this.campaignData[index].rebillApproveCount = Number(rebillApproveCount);
+        this.campaignData[index].rebillDeclineCount = Number(rebillDeclineCount);
         this.campaignData[index].rebillRev = Number(rebillRevenue);
         this.campaignData[index].rebillApprovedPerc = Number(rebillApprovedPerc);
         this.campaignData[index].rebillRefundRev = Number(rebillRefundRev);
@@ -200,127 +161,6 @@ export default {
       }
     },
 
-    // rebillApprovedPerc
-    // async rebillApprovedPerc() {
-    //   try {
-    //     let response = await axios.get(
-    //       `/api/order/rebillApprovedPerc/?startDate=${this.startDate}&endDate=${this.endDate}`
-    //     );
-    //     this.campaignData.map((k, i) => {
-    //       let obj = { ...k, rebillApprovedPerc: response.data[i] };
-    //       this.campaignData[i] = obj;
-    //     });
-    //   } catch (error) {
-    //     console.log("getting error rebillApprovedPerc");
-    //   }
-    // },
-
-    // rebill-refundRev
-    // async rebillRefundRev() {
-    //   try {
-    //     let response = await axios.get(
-    //       `/api/order/rebill-refundRev/?startDate=${this.startDate}&endDate=${this.endDate}`
-    //     );
-    //     this.campaignData.map((k, i) => {
-    //       let obj = { ...k, rebillRefundRev: response.data[i] };
-    //       this.campaignData[i] = obj;
-    //     });
-    //   } catch (error) {
-    //     console.log("getting error rebillRefundRev");
-    //   }
-    // },
-
-    // billableRebillRev
-    // async billableRebillRev() {
-    //   this.googleSheet.map((item) => {
-    //     let result = item[8] - item[10];
-    //     if (!result) result = 0;
-    //     item.push(result.toFixed(2));
-    //   });
-    // },
-
-    // frontend-refundRev
-    // async frontendRefundRev() {
-    //   try {
-    //     let response = await axios.get(
-    //       `/api/order/frontend-refundRev/?startDate=${this.startDate}&endDate=${this.endDate}`
-    //     );
-    //     this.campaignData.map((k, i) => {
-    //       let obj = { ...k, frontendRefundRev: response.data[i] };
-    //       this.campaignData[i] = obj;
-    //     });
-    //   } catch (error) {
-    //     console.log("getting error frontendRefundRev");
-    //   }
-    // },
-
-    // frontend-refundPerc
-    // async frontendRefundPerc() {
-    //   try {
-    //     let response = await axios.get(
-    //       `/api/order/frontend-refundPerc/?startDate=${this.startDate}&endDate=${this.endDate}`
-    //     );
-    //     this.campaignData.map((k, i) => {
-    //       let obj = { ...k, frontendRefundPerc: response.data[i] };
-    //       this.campaignData[i] = obj;
-    //     });
-    //   } catch (error) {
-    //     console.log("getting error frontendRefundPerc");
-    //   }
-    // },
-
-    // rebill-refundPerc
-    // async rebillRefundPerc() {
-    //   try {
-    //     let response = await axios.get(
-    //       `/api/order/rebill-refundPerc/?startDate=${this.startDate}&endDate=${this.endDate}`
-    //     );
-    //     this.campaignData.map((k, i) => {
-    //       let obj = { ...k, rebillRefundPerc: response.data[i] };
-    //       this.campaignData[i] = obj;
-    //     });
-    //   } catch (error) {
-    //     console.log("getting error rebillRefundPerc");
-    //   }
-    // },
-
-    // chargebackCnt
-    // async chargebackCnt() {
-    //   try {
-    //     let response = await axios.get(
-    //       `/api/order/chargebackCnt/?startDate=${this.startDate}&endDate=${this.endDate}`
-    //     );
-    //     this.campaignData.map((k, i) => {
-    //       let obj = { ...k, chargebackCnt: response.data[i] };
-    //       this.campaignData[i] = obj;
-    //     });
-    //   } catch (error) {
-    //     console.log("getting error chargebackCnt");
-    //   }
-    // },
-
-    // initial-vip
-    // async initialVip() {
-    //   try {
-    //     const values = Object.values(this.config.campaignCategory);
-    //     const categoryCampaignIds = values.map((value) => value.campaignId);
-    //     const fetch = async (value, index) => {
-    //       const { data } = await axios.get(
-    //         `/api/purchases/initial-vip/?startDate=${this.startDate}&endDate=${this.endDate}&campaignId=${value}`
-    //       );
-    //       const { totalResults, creditCard, payPal } = data;
-    //       this.campaignData[index].initialVip = Number(totalResults);
-    //       this.campaignData[index].CCinitialVip = Number(creditCard);
-    //       this.campaignData[index].PPinitialVip = Number(payPal);
-    //       return 1;
-    //     };
-    //     for (const [index, value] of categoryCampaignIds.entries()) {
-    //       await fetch(value, index);
-    //     }
-    //   } catch (error) {
-    //     console.log("getting error initialVip");
-    //   }
-    // },
     async initialVip() {
       const ids = this.campaignCategory.map(category => category.campaignId);
 
@@ -353,106 +193,6 @@ export default {
         this.campaignData[index].declinedVip = Number(declinedVip);
       }
     },
-
-    // CCinitial-vip
-    // async CCinitialVip() {
-    //   try {
-    //     const values = Object.values(this.config.campaignCategory);
-    //     const categoryCampaignIds = values.map((value) => value.campaignId);
-    //     const fetch = async (value, index) => {
-    //       const { data } = await axios.get(
-    //         `/api/purchases/initial-vip/?startDate=${this.startDate}&endDate=${this.endDate}&campaignId=${value}`
-    //       );
-    //       const { totalResults } = data;
-    //       this.campaignData[index].CCinitialVip = Number(totalResults);
-    //       return 1;
-    //     };
-    //     for (const [index, value] of categoryCampaignIds.entries()) {
-    //       await fetch(value, index);
-    //     }
-    //   } catch (error) {
-    //     console.log("getting error CCinitialVip");
-    //   }
-    // },
-
-    // CCoptVip
-    // async CCoptVip() {
-    //   this.googleSheet.map((item) => {
-    //     item.push("");
-    //   });
-    // },
-
-    // updateCCoptVip
-    // async updateCCoptVip() {
-    //   this.googleSheet.map((item) => {
-    //     let result = item[18] / item[20];
-    //     if (!result) result = 0;
-    //     item[19] = result.toFixed(2);
-    //   });
-    // },
-
-    // CCinitial-sale
-    // async CCinitialSale() {
-    //   try {
-    //     let response = await axios.get(
-    //       `/api/order/CCinitial-sale/?startDate=${this.startDate}&endDate=${this.endDate}`
-    //     );
-    //     this.campaignData.map((k, i) => {
-    //       let obj = { ...k, CCinitialSale: response.data[i] };
-    //       this.campaignData[i] = obj;
-    //     });
-    //   } catch (error) {
-    //     console.log("getting error CCinitialSale");
-    //   }
-    // },
-
-    // PPinitial-sale
-    // async PPinitialSale() {
-    //   try {
-    //     let response = await axios.get(
-    //       `/api/order/PPinitial-sale/?startDate=${this.startDate}&endDate=${this.endDate}`
-    //     );
-    //     this.campaignData.map((k, i) => {
-    //       let obj = { ...k, PPinitialSale: response.data[i] };
-    //       this.campaignData[i] = obj;
-    //     });
-    //   } catch (error) {
-    //     console.log("getting error PPinitialSale");
-    //   }
-    // },
-
-    // PPinitial-vip
-    // async PPinitialVip() {
-    //   try {
-    //     let response = await axios.get(
-    //       `/api/order/PPinitial-vip/?startDate=${this.startDate}&endDate=${this.endDate}`
-    //     );
-    //     this.campaignData.map((k, i) => {
-    //       let obj = { ...k, PPinitialVip: response.data[i] };
-    //       this.campaignData[i] = obj;
-    //     });
-    //   } catch (error) {
-    //     console.log("getting error PPinitialVip");
-    //   }
-    // },
-
-    // PPoptVip
-    // async PPoptVip() {
-    //   this.googleSheet.map((item) => {
-    //     let result = item[22] / item[21];
-    //     if (!result) result = 0;
-    //     item.push(result.toFixed(2));
-    //   });
-    // },
-
-    // TotaloptPPCC
-    // async TotaloptPPCC() {
-    //   this.googleSheet.map((item) => {
-    //     let result = item[16] / item[3];
-    //     if (!result) result = 0;
-    //     item.push(result.toFixed(2));
-    //   });
-    // },
 
     // total-vip
     async totalVip() {
@@ -559,6 +299,10 @@ export default {
               {{ item.partial }}
             </td>
             <td class="px-6 py-4">{{ item.rebillRev }}</td>
+            <!-- rebillApproveCount -->
+            <td class="px-6 py-4">{{ item.rebillApproveCount }}</td>
+            <!-- rebillDeclineCount -->
+            <td class="px-6 py-4">{{ item.rebillDeclineCount }}</td>
             <td class="px-6 py-4">
               {{ item.rebillApprovedPerc }}
             </td>
@@ -577,7 +321,6 @@ export default {
               {{ ((salesRefund[index] / item.salesTotal) * 100).toFixed(2) }}
             </td>
             <!-- Rebill Refund % -->
-            <!-- <td class="px-6 py-4">{{ item.rebillRefundPerc }}</td> -->
             <!-- Updated Formula -->
             <td class="px-6 py-4">
               {{

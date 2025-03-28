@@ -1,29 +1,29 @@
 export interface RequestOptions {
   method:
-    | "POST"
-    | "GET"
-    | "HEAD"
-    | "PATCH"
-    | "PUT"
-    | "DELETE"
-    | "CONNECT"
-    | "OPTIONS"
-    | "TRACE";
+  | "POST"
+  | "GET"
+  | "HEAD"
+  | "PATCH"
+  | "PUT"
+  | "DELETE"
+  | "CONNECT"
+  | "OPTIONS"
+  | "TRACE";
   redirect: RequestRedirect;
   body: number[];
 }
 
 export interface requestOptionsTransaction {
   method:
-    | "POST"
-    | "GET"
-    | "HEAD"
-    | "PATCH"
-    | "PUT"
-    | "DELETE"
-    | "CONNECT"
-    | "OPTIONS"
-    | "TRACE";
+  | "POST"
+  | "GET"
+  | "HEAD"
+  | "PATCH"
+  | "PUT"
+  | "DELETE"
+  | "CONNECT"
+  | "OPTIONS"
+  | "TRACE";
   redirect: RequestRedirect;
   body: string;
 }
@@ -44,6 +44,8 @@ export interface InitialVipResponse {
 }
 
 export interface RebillRevenueResponse {
+  rebillApproveCount: number;
+  rebillDeclineCount: number;
   rebillRevenue: number;
   rebillApprovedPerc: number;
   rebillRefundRev: number;
