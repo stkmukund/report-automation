@@ -12,6 +12,8 @@ export default defineEventHandler(async (event) => {
   let rebillApprovedPerc = 0;
   let rebillRefundRev = 0;
   let chargebackCnt = 0;
+  let rebillApproveCount = 0;
+  let rebillDeclineCount = 0;
 
   // rebill-revenue
   const fetchComplete = async () => {
@@ -20,10 +22,14 @@ export default defineEventHandler(async (event) => {
     );
     if (data.result === "SUCCESS") {
       rebillRevenue += Number(data.message[0].rebillRev);
+      rebillApproveCount += Number(data.message[0].rebillCnt);
+      rebillDeclineCount += Number(data.message[0].rebillDeclinesCnt);
       rebillApprovedPerc += Number(data.message[0].rebillApprovedPerc);
       rebillRefundRev += Number(data.message[0].refundRev);
       chargebackCnt += Number(data.message[0].chargebackCnt);
       return {
+        rebillApproveCount,
+        rebillDeclineCount,
         rebillRevenue,
         rebillApprovedPerc,
         rebillRefundRev,
@@ -31,6 +37,8 @@ export default defineEventHandler(async (event) => {
       };
     } else {
       return {
+        rebillApproveCount,
+        rebillDeclineCount,
         rebillRevenue,
         rebillApprovedPerc,
         rebillRefundRev,
