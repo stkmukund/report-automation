@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
   if (!query.startDate || !query.endDate)
     return "provide startDate and endDate";
   // if (!query.id)
-    // return { result: "ERROR", message: "Provide id for campaignCategory" };
+  // return { result: "ERROR", message: "Provide id for campaignCategory" };
 
   // query.id = getCampaignIdById(+query.id);
   query.id = "1, 6, 9, 47, 61, 67, 68, 69, 70";
@@ -50,7 +50,7 @@ export default defineEventHandler(async (event) => {
       count = 1;
 
       return totalAmount;
-    } catch (error) {}
+    } catch (error) { }
   };
 
   // Refunded
@@ -67,13 +67,13 @@ export default defineEventHandler(async (event) => {
       if (response.result === "SUCCESS") {
         totalOrders.push(response.message.data);
       }
-      if (response.message.totalResults > 200) {        
+      if (response.message.totalResults > 200) {
         count = Math.ceil(response.message.totalResults / 200);
       }
 
       if (count > page) {
         console.log("count", count, page);
-        
+
         page++;
         await fetchRefunded();
       }
@@ -82,38 +82,7 @@ export default defineEventHandler(async (event) => {
       count = 1;
 
       return totalAmount;
-    } catch (error) {}
-  };
-
-  // Cancelled
-  const fetchCancelled = async () => {
-    try {
-      const response = await $fetch(
-        `https://api.checkoutchamp.com/order/query/?loginId=${config.CC_LOGIN_ID}&password=${config.CC_PASSWORRD}&campaignId=${query.id}&orderStatus=CANCELLED&startDate=${query.startDate}&endDate=${query.endDate}&resultsPerPage=200&orderType=NEW_SALE&page=${page}`
-      ).then((data) => JSON.parse(data));
-
-      if (response.result === "ERROR") {
-        throw new Error(response.message);
-      }
-
-      if (response.result === "SUCCESS") {
-        totalOrders.push(response.message.data);
-      }
-
-      if (response.message.totalResults > 200) {
-        count = Math.ceil(response.message.totalResults / 200);
-      }
-
-      if (count > page) {
-        page++;
-        await fetchCancelled();
-      }
-
-      page = 1;
-      count = 1;
-
-      return totalAmount;
-    } catch (error) {}
+    } catch (error) { }
   };
 
   // DECLINED
@@ -134,7 +103,6 @@ export default defineEventHandler(async (event) => {
 
   await fetchComplete();
   await fetchRefunded();
-  await fetchCancelled();
   const declined = await fetchDeclined();
   const partial = await fetchPartial();
 
