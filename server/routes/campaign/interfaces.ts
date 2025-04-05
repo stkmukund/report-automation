@@ -48,6 +48,7 @@ export interface RebillRevenueResponse {
   rebillDeclineCount: number;
   rebillRevenue: number;
   rebillApprovedPerc: number;
+  rebillDeclinePerc: number;
   rebillRefundRev: number;
   chargebackCnt: number;
 }

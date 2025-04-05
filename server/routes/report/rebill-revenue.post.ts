@@ -10,6 +10,7 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event);
   let rebillRevenue = 0;
   let rebillApprovedPerc = 0;
+  let rebillDeclinePerc = 0;
   let rebillRefundRev = 0;
   let chargebackCnt = 0;
   let rebillApproveCount = 0;
@@ -25,6 +26,7 @@ export default defineEventHandler(async (event) => {
       rebillApproveCount += Number(data.message[0].rebillCnt);
       rebillDeclineCount += Number(data.message[0].rebillDeclinesCnt);
       rebillApprovedPerc += Number(data.message[0].rebillApprovedPerc);
+      rebillDeclinePerc += rebillDeclineCount / (rebillApproveCount + rebillDeclineCount);
       rebillRefundRev += Number(data.message[0].refundRev);
       chargebackCnt += Number(data.message[0].chargebackCnt);
       return {
@@ -32,6 +34,7 @@ export default defineEventHandler(async (event) => {
         rebillDeclineCount,
         rebillRevenue,
         rebillApprovedPerc,
+        rebillDeclinePerc,
         rebillRefundRev,
         chargebackCnt,
       };
@@ -41,6 +44,7 @@ export default defineEventHandler(async (event) => {
         rebillDeclineCount,
         rebillRevenue,
         rebillApprovedPerc,
+        rebillDeclinePerc,
         rebillRefundRev,
         chargebackCnt,
       };
