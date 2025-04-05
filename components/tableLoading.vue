@@ -2,7 +2,7 @@
 export default {
     data() {
         return {
-            tableHead: ["Campaign Category", "Sales Total", "Initial Sales", "Declines", "Partials", "Rebill Revenue", "Rebill Approval %", "Rebill Refunds", "Front-end Refund Amt", "Front-end Refund %", "Rebill refund %", "Chargebacks", "New VIPs", "VIP Cancellation", "CC New VIPs", "CC Initial Sales", "PP Initial Sales", "PP New VIPs", "Total VIPs"],
+            tableHead: ["Campaign Category", "Sales Total", "Initial Sales", "Declines", "Partials", "Rebill Revenue", "Rebill Approved Count","Rebill Declined Count", "Rebill Approval %","Rebill Decline %", "Rebill Refunds", "Front-end Refund Amt", "Front-end Refund %", "Rebill refund %", "Chargebacks", "New VIPs", "VIP Cancellation", "CC New VIPs", "CC Initial Sales", "PP Initial Sales", "PP New VIPs", "Total VIPs"],
         }
     }
 }
@@ -20,6 +20,15 @@ export default {
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         <TableLoadingEffect />
                     </th>
+                    <td class="px-6 py-4">
+                        <TableLoadingEffect />
+                    </td>
+                    <td class="px-6 py-4">
+                        <TableLoadingEffect />
+                    </td>
+                    <td class="px-6 py-4">
+                        <TableLoadingEffect />
+                    </td>
                     <td class="px-6 py-4">
                         <TableLoadingEffect />
                     </td>

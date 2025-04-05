@@ -26,6 +26,7 @@ export default {
         "Rebill Approved Count",
         "Rebill Declined Count",
         "Rebill Approval %",
+        "Rebill Decline %",
         "Rebill Refunds",
         "Front-end Refund Amt",
         "Front-end Refund %",
@@ -147,7 +148,7 @@ export default {
       for (let index = 0; index < ids.length; index++) {
         const id = ids[index];
 
-        const { rebillApproveCount, rebillDeclineCount, rebillRevenue, rebillApprovedPerc, rebillRefundRev, chargebackCnt } = await $fetch(`/report/rebill-revenue?startDate=${this.startDate}&endDate=${this.endDate}`, {
+        const { rebillDeclinePerc, rebillApproveCount, rebillDeclineCount, rebillRevenue, rebillApprovedPerc, rebillRefundRev, chargebackCnt } = await $fetch(`/report/rebill-revenue?startDate=${this.startDate}&endDate=${this.endDate}`, {
           method: "POST",
           redirect: "follow",
           body: JSON.stringify(id),
@@ -156,6 +157,7 @@ export default {
         this.campaignData[index].rebillDeclineCount = Number(rebillDeclineCount);
         this.campaignData[index].rebillRev = Number(rebillRevenue);
         this.campaignData[index].rebillApprovedPerc = Number(rebillApprovedPerc);
+        this.campaignData[index].rebillDeclinePerc = Number((rebillDeclinePerc * 100).toFixed(2));
         this.campaignData[index].rebillRefundRev = Number(rebillRefundRev);
         this.campaignData[index].chargebackCnt = Number(chargebackCnt);
       }
@@ -303,9 +305,8 @@ export default {
             <td class="px-6 py-4">{{ item.rebillApproveCount }}</td>
             <!-- rebillDeclineCount -->
             <td class="px-6 py-4">{{ item.rebillDeclineCount }}</td>
-            <td class="px-6 py-4">
-              {{ item.rebillApprovedPerc }}
-            </td>
+            <td class="px-6 py-4">{{ item.rebillApprovedPerc }}</td>
+            <td class="px-6 py-4">{{ item.rebillDeclinePerc }}</td>
             <td class="px-6 py-4 text-red-500">{{ item.rebillRefundRev }}</td>
             <td class="px-6 py-4 text-red-500">
               <!-- {{
