@@ -27,6 +27,7 @@ export default defineEventHandler(async (event) => {
       rebillDeclineCount += Number(data.message[0].rebillDeclinesCnt);
       rebillApprovedPerc += Number(data.message[0].rebillApprovedPerc);
       rebillDeclinePerc += rebillDeclineCount / (rebillApproveCount + rebillDeclineCount);
+      if (isNaN(rebillDeclinePerc)) rebillDeclinePerc = 0;
       rebillRefundRev += Number(data.message[0].refundRev);
       chargebackCnt += Number(data.message[0].chargebackCnt);
       return {
